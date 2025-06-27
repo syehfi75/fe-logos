@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Suspense } from "react";
+import Providers from "./providers";
 
 const grostek = localFont({
   src: "./fonts/Grostek-vf.ttf",
@@ -33,7 +34,9 @@ export default function RootLayout({
       <body
         className={`${grostek.variable} ${grostekItalic.variable} antialiased`}
       >
-        <Suspense>{children}</Suspense>
+        <Providers>
+          <Suspense>{children}</Suspense>
+        </Providers>
       </body>
     </html>
   );

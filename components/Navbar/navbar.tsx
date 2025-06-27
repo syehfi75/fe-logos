@@ -29,10 +29,15 @@ function Navbar() {
             </a>
           </div>
           <div className="flex items-center space-x-4">
-            <Link href={'/login'} className="text-lg">Login</Link>
-            <a href="/login?state=register" className="text-lg border border-white px-4 py-2 rounded-full hover:bg-gray/30 hover:text-white transition-colors">
+            <Link href={"/login"} className="text-lg">
+              Login
+            </Link>
+            <Link
+              href="/login?state=register"
+              className="text-lg border border-white px-4 py-2 rounded-full hover:bg-gray/30 hover:text-white transition-colors"
+            >
               Create a account
-            </a>
+            </Link>
           </div>
         </div>
       </nav>

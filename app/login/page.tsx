@@ -1,20 +1,25 @@
 "use client";
+import { Eye, EyeOff } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function LoginPage() {
-  // make state for tabs login and signup
   const [activeTab, setActiveTab] = useState("login");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  // State inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const searchParams = useSearchParams();
 
+
+  const searchParams = useSearchParams();
   const state = searchParams.get("state") || "login";
   useEffect(() => {
     if (state === "register") {
       setActiveTab("signup");
     }
   }, [state]);
+
   return (
     <>
       <div className="flex justify-center flex-col items-center min-h-screen w-full">
@@ -48,14 +53,27 @@ export default function LoginPage() {
                 type="text"
                 placeholder="Email"
                 className="p-2 border-2 border-gray-600/40 rounded-lg w-full focus-visible:outline-none "
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
               />
-              <input
-                type="password"
-                name="password"
-                id="password"
-                placeholder="Password"
-                className="p-2 border-2 border-gray-600/40 rounded-lg w-full focus-visible:outline-none "
-              />
+              <div className="relative w-full">
+                <span className="absolute top-2.5 right-2 cursor-pointer">
+                  {passwordVisible ? (
+                    <EyeOff onClick={() => setPasswordVisible(false)} />
+                  ) : (
+                    <Eye onClick={() => setPasswordVisible(true)} />
+                  )}
+                </span>
+                <input
+                  type={passwordVisible ? "text" : "password"}
+                  name="password"
+                  id="password"
+                  placeholder="Password"
+                  className="p-2 border-2 border-gray-600/40 rounded-lg w-full focus-visible:outline-none "
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
+                />
+              </div>
               <span className="ml-auto mt-2">Forgot password?</span>
               <button className="rounded-full bg-[#01533F] text-white w-full p-4 cursor-pointer hover:bg-[#014a3b] transition-colors mt-6 mb-4">
                 Login with Email
@@ -78,13 +96,24 @@ export default function LoginPage() {
                 placeholder="Email"
                 className="p-2 border-2 border-gray-600/40 rounded-lg w-full focus-visible:outline-none "
               />
-              <input
-                type="password"
-                name="password"
-                id="password"
-                placeholder="Password"
-                className="p-2 border-2 border-gray-600/40 rounded-lg w-full focus-visible:outline-none "
-              />
+              <div className="relative w-full">
+                <span className="absolute top-2.5 right-2 cursor-pointer">
+                  {passwordVisible ? (
+                    <EyeOff onClick={() => setPasswordVisible(false)} />
+                  ) : (
+                    <Eye onClick={() => setPasswordVisible(true)} />
+                  )}
+                </span>
+                <input
+                  type={passwordVisible ? "text" : "password"}
+                  name="password"
+                  id="password"
+                  placeholder="Password"
+                  className="p-2 border-2 border-gray-600/40 rounded-lg w-full focus-visible:outline-none "
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
+                />
+              </div>
               <button className="rounded-full bg-[#01533F] text-white w-full p-4 cursor-pointer hover:bg-[#014a3b] transition-colors mt-6 mb-4">
                 Sign up with Email
               </button>

@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import localFont from 'next/font/local'
+import localFont from "next/font/local";
 import "./globals.css";
+import { Suspense } from "react";
 
 const grostek = localFont({
-  src: './fonts/Grostek-vf.ttf',
+  src: "./fonts/Grostek-vf.ttf",
   variable: "--font-grostek",
   display: "swap",
   preload: true,
 });
 
 const grostekItalic = localFont({
-  src: './fonts/Grostek-italic-vf.ttf',
+  src: "./fonts/Grostek-italic-vf.ttf",
   variable: "--font-italic-grostek",
   display: "swap",
   preload: true,
@@ -32,7 +33,7 @@ export default function RootLayout({
       <body
         className={`${grostek.variable} ${grostekItalic.variable} antialiased`}
       >
-        {children}
+        <Suspense>{children}</Suspense>
       </body>
     </html>
   );

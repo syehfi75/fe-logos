@@ -11,7 +11,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-
   const searchParams = useSearchParams();
   const state = searchParams.get("state") || "login";
   useEffect(() => {
@@ -119,8 +118,12 @@ export default function LoginPage() {
               </button>
             </>
           )}
-          <div>
-            <span className="text-gray-500">or continue with</span>
+          <div className="flex items-center my-4 w-full max-w-md">
+            <div className="flex-grow border-t border-gray-300"></div>
+            <span className="mx-4 text-gray-500 uppercase">
+              Or continue with
+            </span>
+            <div className="flex-grow border-t border-gray-300"></div>
           </div>
         </div>
       </div>

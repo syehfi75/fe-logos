@@ -3,6 +3,7 @@
 @theme inline {
   --font-grostek: var(--font-grostek);
   --font-grostek-italic: var(--font-italic-grostek);
+  --color-logos-green: oklch(0.3934 0.0779 169.5)
 }
 
 body {

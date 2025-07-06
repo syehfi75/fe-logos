@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar/navbar";
 import Image from "next/image";
 import Bg from "../assets/mvcom_header-bg_d.webp";
+import VideoPlayer from "@/components/VideoPlayer/VideoPlayer";
 
 export default function Home() {
   return (
@@ -18,13 +19,19 @@ export default function Home() {
             objectFit: "cover",
           }}
         />
-        {/* <div className="relative z-10">
+        <div className="relative z-10 mx-auto w-5/6 p-20">
           <div className="flex flex-col items-center justify-center w-full h-full">
-            <h1 className="text-white font-bold text-8xl">
-              A better you every day
+            <h1 className="text-white font-bold text-8xl text-center mb-8">
+              A better you <br /> every day
             </h1>
+            <p className="text-2xl text-[#CED1D7] font-medium">
+              Be part of the world’s most powerful life transformation platform
+            </p>
+            <div className="w-full mt-9">
+              <VideoPlayer url="https://www.w3schools.com/html/mov_bbb.mp4" playing muted />
+            </div>
           </div>
-        </div> */}
+        </div>
       </div>
     </>
   );

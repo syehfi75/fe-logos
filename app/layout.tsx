@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Suspense } from "react";
 import Providers from "./providers";
+import { Toaster } from "sonner";
 
 const grostek = localFont({
   src: "./fonts/Grostek-vf.ttf",
@@ -35,7 +36,10 @@ export default function RootLayout({
         className={`${grostek.variable} ${grostekItalic.variable} antialiased`}
       >
         <Suspense>
-          <Providers>{children}</Providers>
+          <Providers>
+            {children} 
+            <Toaster position="top-center" closeButton richColors />
+          </Providers>
         </Suspense>
       </body>
     </html>

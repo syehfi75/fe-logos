@@ -5,6 +5,11 @@ export const metadata: Metadata = {
   title: "Activate Your Account",
 };
 
-export default function ActivateAccountPage() {
-  return <ActivateAccount />;
+export default async function ActivateAccountPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const {slug} = await params
+  return <ActivateAccount slug={slug} />;
 }

@@ -55,9 +55,6 @@ export default function ActivateAccount({ slug }: Props) {
           params: { token: slug[0] }, // axios get harus pakai params
         }
       );
-
-      // const data = res.data;
-      // console.log("register:", data);
       setIsLoading(false);
       toast.success(
         "Please confirm your account by clicking the activation link in the email we have sent."

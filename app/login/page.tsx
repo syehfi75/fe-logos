@@ -1,4 +1,5 @@
 "use client";
+import { useAuthStore } from "@/store/auth";
 import axios from "axios";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -7,6 +8,7 @@ import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
+  const login = useAuthStore((state) => state.login);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<
     "login" | "signup" | "forgot_pass"
@@ -24,7 +26,7 @@ export default function LoginPage() {
     username: "",
     email: "",
     password: "",
-    confirn_pass: "",
+    password_confirm: "",
     role: "member",
   });
 
@@ -48,22 +50,17 @@ export default function LoginPage() {
   const handleLoginSubmit = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.post(
-        process.env.NEXT_PUBLIC_API_AUTH + "/api/login",
-        loginForm
-      );
+      
+      // console.log("Login sukses:", data);
+      await login(loginForm.email, loginForm.password)
 
-      const data = res.data;
-      console.log("Login sukses:", data);
-
-      localStorage.setItem("token", data.token);
+      // localStorage.setItem("token", data.token);
 
       setIsLoading(false);
       router.push("/");
     } catch (error: any) {
-      console.error("Login gagal:", error);
       setIsLoading(false);
-      toast.error(error.response?.data?.message || "Unknown error");
+      toast.error(error.response?.data?.messages.error || "Unknown error");
     }
   };
 
@@ -76,15 +73,23 @@ export default function LoginPage() {
       );
 
       const data = res.data;
-      console.log("register:", data);
       setIsLoading(false);
       toast.success(
         "Please confirm your account by clicking the activation link in the email we have sent."
       );
     } catch (error: any) {
-      console.error("Login gagal:", error);
       setIsLoading(false);
-      toast.error(error.response?.data?.message || "Unknown error");
+      const errorData = error.response?.data;
+
+      if (errorData && typeof errorData === "object") {
+        const messages = Object.values(errorData.messages).join("\n");
+        toast.error(messages);
+      } else {
+        toast.error(
+          error.response?.data?.messages.error || "Unknown error occurred."
+        );
+      }
+      // toast.error(error.response?.data?.messages.error || "Unknown error");
     }
   };
 
@@ -264,9 +269,9 @@ export default function LoginPage() {
               </span>
               <input
                 type={passwordVisible ? "text" : "password"}
-                name="confirn_pass"
+                name="password_confirm"
                 placeholder="Confirm Password"
-                value={signupForm.confirn_pass}
+                value={signupForm.password_confirm}
                 onChange={handleSignupChange}
                 className="p-2 border-2 border-gray-600/40 rounded-lg w-full focus-visible:outline-none"
               />

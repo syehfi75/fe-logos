@@ -1,7 +1,8 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import Cookies from 'js-cookie';
-import axios from '@/lib/axios';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import Cookies from "js-cookie";
+import axios from "@/lib/axios";
+import { toast } from "sonner";
 
 interface User {
   id: number;
@@ -26,24 +27,27 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       refreshToken: null,
 
-        login: async (email, password) => {
-        const res = await axios.post(`${API_AUTH}/api/login`, { email, password });
+      login: async (email, password) => {
+        const res = await axios.post(`${API_AUTH}/api/login`, {
+          email,
+          password,
+        });
 
         const { access_token, refresh_token, user } = res.data;
 
-        Cookies.set('access_token', access_token, { expires: 1 });
-        Cookies.set('refresh_token', refresh_token, { expires: 7 });
+        Cookies.set("access_token", access_token, { expires: 1 });
+        Cookies.set("refresh_token", refresh_token, { expires: 7 });
 
         set({
-            accessToken: access_token,
-            refreshToken: refresh_token,
-            user,
+          accessToken: access_token,
+          refreshToken: refresh_token,
+          user,
         });
       },
 
       logout: () => {
-        Cookies.remove('access_token');
-        Cookies.remove('refresh_token');
+        Cookies.remove("access_token");
+        Cookies.remove("refresh_token");
         set({
           user: null,
           accessToken: null,
@@ -52,7 +56,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: 'auth-storage',
+      name: "auth-storage",
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,
@@ -63,6 +67,13 @@ export const useAuthStore = create<AuthState>()(
 );
 
 // Bisa dipanggil dari luar (axios.ts)
-export const logoutUser = () => {
-  useAuthStore.getState().logout();
+export const logoutUser = async () => {
+  try {
+    const token = useAuthStore.getState().accessToken;
+    await axios.post(`${API_AUTH}/api/logout`, null, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    useAuthStore.getState().logout();
+    toast.success("Logout berhasil!");
+  } catch (error) {}
 };

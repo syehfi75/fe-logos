@@ -1,17 +1,15 @@
 "use client";
 
-import { useAuthStore } from "@/store/auth";
+import { logoutUser, useAuthStore } from "@/store/auth";
 import { CircleUserRound } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
 function Navbar() {
   const user = useAuthStore((state) => state);
-  const userLogout = useAuthStore((state) => state.logout);
+  // const userLogout = useAuthStore((state) => state.logout);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  // const router = useRouter();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -22,6 +20,7 @@ function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  
   
 
   return (
@@ -73,7 +72,7 @@ function Navbar() {
                   </span>
                   <button
                     onClick={() => {
-                      userLogout();
+                      logoutUser();
                       setOpen(false);
                       // router.push("/");
                     }}

@@ -1,15 +1,19 @@
 "use client";
 
 import axios from "axios";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export default function ResetPasswordPage() {
+  const searchParams = useSearchParams();
+  const validator = searchParams.getAll("validator");
+  const selector = searchParams.getAll("selector");
   const [isLoading, setIsLoading] = useState(false);
   const [resetPass, setResetPass] = useState({
-    selector: "472a1a77b4c27a99",
+    selector: selector[0],
     validator:
-      "cf94fbcb27ab12ff3b875884efd784d88054c02df707575b1c86a9c4e83b2739",
+      validator[0],
     password: "",
     confirm_password: "",
   });

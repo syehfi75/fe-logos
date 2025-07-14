@@ -12,6 +12,7 @@ interface ReactVideoPlayerProps {
   muted?: boolean;
   width?: string;
   height?: string;
+  trackProgress?: boolean;
 }
 
 export default function VideoPlayer({
@@ -23,6 +24,7 @@ export default function VideoPlayer({
   muted = false,
   width = "100%",
   height = "100%",
+  trackProgress = false
 }: ReactVideoPlayerProps) {
   const playerRef = useRef<any>(null);
   const lastSavedRef = useRef<number>(0);
@@ -31,10 +33,12 @@ export default function VideoPlayer({
 
   // Simpan posisi terakhir (throttle setiap 5 detik)
   const handleProgress = ({ timeStamp }: { timeStamp: number }) => {
-    const now = Date.now();
-    if (now - lastSavedRef.current > 5000) {
-      localStorage.setItem(STORAGE_KEY, String(timeStamp));
-      lastSavedRef.current = now;
+    if (trackProgress) {
+      const now = Date.now();
+      if (now - lastSavedRef.current > 5000) {
+        localStorage.setItem(STORAGE_KEY, String(timeStamp));
+        lastSavedRef.current = now;
+      }
     }
   };
 

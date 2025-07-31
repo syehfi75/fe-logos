@@ -30,16 +30,17 @@ axiosInstance.interceptors.response.use(
 
         const res = await axios.post(
           `${API_AUTH}/api/refresh-token`,
-          { refresh_token }
+          null,
+          {headers: {Authorization: `Bearer ${refresh_token}`}}
         );
 
-        const { access_token } = res.data;
+        const { access_token } = res.data.access_token;
         Cookies.set("access_token", access_token);
 
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
         return axiosInstance(originalRequest);
       } catch (err) {
-        logoutUser();
+        // logoutUser();
         Cookies.remove("access_token");
         Cookies.remove("refresh_token");
         if (typeof window !== "undefined") {

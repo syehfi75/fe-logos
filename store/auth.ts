@@ -3,9 +3,6 @@ import { persist } from "zustand/middleware";
 import Cookies from "js-cookie";
 import axios from "@/lib/axios";
 import { toast } from "sonner";
-// import axios from "axios";
-
-// let intervalId: NodeJS.Timeout | null = null;
 
 interface User {
   id: number;
@@ -14,7 +11,6 @@ interface User {
 }
 
 interface AuthState {
-  // startTokenWatcher: () => void;
   user: User | null;
   accessToken: string | null;
   refreshToken: string | null;
@@ -58,28 +54,6 @@ export const useAuthStore = create<AuthState>()(
           refreshToken: null,
         });
       },
-      // startTokenWatcher: () => {
-      //   if (intervalId) return;
-      //   const refresh_token = Cookies.get("refresh_token");
-      //   if (!refresh_token) return;
-
-      //   intervalId = setInterval(async () => {
-      //     const token = Cookies.get("access_token");
-
-      //     if (!token) {
-      //       const res = await axios.post(
-      //         `${API_AUTH}/api/refresh-token`,
-      //         null,
-      //         { headers: { Authorization: `Bearer ${refresh_token}` } }
-      //       );
-
-      //       const { access_token } = res.data;
-      //       console.log("res.data.access_token: ", access_token);
-
-      //       Cookies.set("access_token", access_token);
-      //     }
-      //   }, 5000);
-      // },
     }),
     {
       name: "auth-storage",
@@ -92,7 +66,6 @@ export const useAuthStore = create<AuthState>()(
   )
 );
 
-// Bisa dipanggil dari luar (axios.ts)
 export const logoutUser = async () => {
   try {
     const token = useAuthStore.getState().accessToken;

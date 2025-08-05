@@ -1,4 +1,3 @@
-import { logoutUser } from "@/store/auth";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -40,7 +39,6 @@ axiosInstance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
         return axiosInstance(originalRequest);
       } catch (err) {
-        // logoutUser();
         Cookies.remove("access_token");
         Cookies.remove("refresh_token");
         if (typeof window !== "undefined") {

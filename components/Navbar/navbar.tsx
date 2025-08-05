@@ -25,7 +25,7 @@ function Navbar() {
 
   return (
     <>
-      <nav className="relative z-10 flex items-center justify-between p-4 bg-transparent text-white font-grostek">
+      <nav className="relative z-10 flex items-center justify-between p-4 bg-logos-green text-white font-grostek">
         <div className="flex justify-between items-center w-full max-w-6xl mx-auto">
           <div className="flex items-center space-x-4">
             <a href="/" className="text-lg">

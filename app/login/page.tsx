@@ -57,7 +57,7 @@ export default function LoginPage() {
       // localStorage.setItem("token", data.token);
 
       setIsLoading(false);
-      router.push("/");
+      router.push("/dashboard");
     } catch (error: any) {
       setIsLoading(false);
       toast.error(error.response?.data?.messages.error || "Unknown error");

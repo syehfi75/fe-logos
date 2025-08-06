@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 
 interface ReactVideoPlayerProps {
-  videoId?: string; // Unique ID per video untuk key localStorage
-  url: string;
+  videoId?: string;
+  url: string | undefined;
   controls?: boolean;
   playing?: boolean;
   loop?: boolean;
@@ -13,6 +13,8 @@ interface ReactVideoPlayerProps {
   width?: string;
   height?: string;
   trackProgress?: boolean;
+  className?: string;
+  last_duration?: number;
 }
 
 export default function VideoPlayer({
@@ -24,31 +26,35 @@ export default function VideoPlayer({
   muted = false,
   width = "100%",
   height = "100%",
-  trackProgress = false
+  trackProgress = false,
+  className,
+  last_duration = 0,
 }: ReactVideoPlayerProps) {
   const playerRef = useRef<any>(null);
   const lastSavedRef = useRef<number>(0);
 
   const STORAGE_KEY = `video-progress-${videoId}`;
 
-  // Simpan posisi terakhir (throttle setiap 5 detik)
-  const handleProgress = ({ timeStamp }: { timeStamp: number }) => {
+  const handleProgress = () => {
     if (trackProgress) {
       const now = Date.now();
-      if (now - lastSavedRef.current > 5000) {
-        localStorage.setItem(STORAGE_KEY, String(timeStamp));
+      if (now - lastSavedRef.current > 30000) {
+        localStorage.setItem(STORAGE_KEY, String(Math.round(playerRef.current.currentTime)));
         lastSavedRef.current = now;
       }
     }
   };
 
-  // Hapus progress saat video selesai
+  const onReady = useCallback(() => {
+    playerRef.current.currentTime = last_duration;
+  }, [last_duration]);
+
   const handleEnded = () => {
     localStorage.removeItem(STORAGE_KEY);
   };
 
   return (
-    <div className="aspect-video max-w-4xl mx-auto">
+    <div className={`aspect-video ${className}`}>
       <ReactPlayer
         ref={playerRef}
         src={url}
@@ -60,6 +66,8 @@ export default function VideoPlayer({
         height={height}
         onTimeUpdate={handleProgress}
         onEnded={handleEnded}
+        className={`aspect-video ${className}`}
+        onReady={() => onReady()}
       />
     </div>
   );

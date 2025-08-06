@@ -20,17 +20,15 @@ function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  
-  
 
   return (
     <>
       <nav className="relative z-10 flex items-center justify-between p-4 bg-logos-green text-white font-grostek">
         <div className="flex justify-between items-center w-full max-w-6xl mx-auto">
           <div className="flex items-center space-x-4">
-            <a href="/" className="text-lg">
+            <Link href="/" className="text-lg">
               Logo
-            </a>
+            </Link>
             <a href="#" className="text-lg">
               Membership
             </a>
@@ -70,6 +68,12 @@ function Navbar() {
                   <span className="text-sm text-gray-600 mb-2">
                     {user.user.username}
                   </span>
+                  <Link
+                    href="/dashboard"
+                    className="text-sm hover:bg-gray-100 px-2 py-1 rounded-lg transition-colors text-black"
+                  >
+                    Dashboard
+                  </Link>
                   <button
                     onClick={() => {
                       logoutUser();

@@ -11,7 +11,34 @@ export interface Lesson {
   last_position: number;
   video_url: string;
   slug: string;
-  lessons: []
+  order: number;
+  is_locked: boolean;
+  downloadable_resources?: {
+    id: number;
+    title: string;
+    type: string;
+    url: string;
+  };
+}
+
+interface Instructor {
+  name: string;
+  bio: string;
+  avatar: string;
+}
+
+interface CourseDetail {
+  id: number;
+  slug: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  instructor: Instructor;
+  progress_percent: number;
+  total_lessons: number;
+  completed_lessons: number;
+  is_subscribed: boolean;
+  lessons: Lesson[];
 }
 
 interface Course {
@@ -26,17 +53,24 @@ interface Course {
   lessons: Lesson[];
 }
 
+interface ResourceCourse {
+  resources: []
+}
+
 interface CourseStore {
   courses: Course[];
-  lessons: Lesson;
+  courseDetail: CourseDetail | null;
+  resourcesCourseDetail: ResourceCourse | null;
   loading: boolean;
   fetchCourses: () => Promise<void>;
   fetchCourseDetail: (slug: string) => Promise<void>;
+  fetchResourcesCourseDetail: (slug: string) => Promise<void>;
 }
 
 export const useCourseStore = create<CourseStore>((set) => ({
   courses: [],
-  lessons: {} as Lesson,
+  courseDetail: null,
+  resourcesCourseDetail: null,
   loading: false,
   fetchCourses: async () => {
     set({ loading: true });
@@ -77,11 +111,25 @@ export const useCourseStore = create<CourseStore>((set) => ({
       );
       console.log("Detailed Courses Fetched: ", res.data);
 
-      set({ lessons: res.data, loading: false });
+      set({ courseDetail: res.data, loading: false });
     } catch (error) {
       console.error("Error fetching course detail: ", error);
       set({ loading: false });
       throw error;
     }
   },
+  fetchResourcesCourseDetail: async (slug: string) => {
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_AUTH}/dummy-api/course/${slug}/resources`
+      );
+      console.log("Detailed Courses Fetched: ", res.data);
+
+      set({ resourcesCourseDetail: res.data, loading: false });
+    } catch (error) {
+      console.error("Error fetching course detail: ", error);
+      set({ loading: false });
+      throw error;
+    }
+  }
 }));

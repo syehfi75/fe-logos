@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/auth";
 import { useCourseStore } from "@/store/course";
 import { checkAndRefreshToken } from "@/utils/checkToken";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -68,12 +69,12 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
-                  <div
+                  <Link
+                    href={`/lesson/${course.slug}`}
                     className="flex flex-col hover:shadow-lg hover:scale-105 hover:cursor-pointer transition ease-in-out duration-300"
-                    onClick={() => router.push(`/lesson/${course.slug}`)}
                   >
                     {course.lessons.map((data) => (
-                      <>
+                      <div key={data.id}>
                         {!data.is_completed && data.last_position > 0 && (
                           <>
                             <div className="aspect-w-16 aspect-h-">
@@ -92,9 +93,9 @@ export default function Dashboard() {
                             </div>
                           </>
                         )}
-                      </>
+                      </div>
                     ))}
-                  </div>
+                  </Link>
                 </div>
               ))}
             </div>

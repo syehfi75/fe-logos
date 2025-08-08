@@ -53,3 +53,29 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance;
+
+export async function useFetch(
+  method: "get" | "post" | "put" | "delete",
+  url: string,
+  data?: any,
+  options?: { auth?: boolean; headers?: Record<string, string> }
+) {
+  const config: any = {
+    method,
+    url,
+    data,
+    headers: { ...options?.headers },
+  };
+
+  if (options?.auth === false) {
+    delete config.headers.Authorization;
+  } else {
+    const token = Cookies.get("access_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+
+  const res = await axiosInstance(config);
+  return res;
+}

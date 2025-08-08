@@ -30,6 +30,7 @@ export default function HeroHomePage() {
                 url="https://www.w3schools.com/html/mov_bbb.mp4"
                 playing
                 muted
+                className="aspect-video"
               />
             </div>
           </div>

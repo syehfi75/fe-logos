@@ -54,7 +54,7 @@ export default function VideoPlayer({
   };
 
   return (
-    <div className={`aspect-video ${className}`}>
+    <div className={`${className}`}>
       <ReactPlayer
         ref={playerRef}
         src={url}
@@ -66,7 +66,7 @@ export default function VideoPlayer({
         height={height}
         onTimeUpdate={handleProgress}
         onEnded={handleEnded}
-        className={`aspect-video ${className}`}
+        className={`${className}`}
         onReady={() => onReady()}
       />
     </div>

@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import Skeleton from "react-loading-skeleton";
 
 export default function Dashboard() {
   const user = useAuthStore((state) => state.user);
@@ -32,18 +33,26 @@ export default function Dashboard() {
     <>
       <Navbar />
       <div className="container mx-auto px-20">
-        <h1 className="font-bold text-5xl">Hi, {user?.username}</h1>
+        <h1 className="font-bold text-5xl py-6">Hi, {user?.username}</h1>
       </div>
       <div className="bg-gray-300/20 py-12">
         <div className="container mx-auto px-20">
           <p className="font-bold text-3xl">Continue Learning</p>
           {loading ? (
-            <p className="text-gray-500">Loading courses...</p>
+            // <p className="text-gray-500">Loading courses...</p>
+            <div className="flex gap-4">
+              <Skeleton height={250} width={250} />
+              <Skeleton height={250} width={250} />
+              <Skeleton height={250} width={250} />
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
               {courses.map((course) => (
                 <div key={course.id} className="bg-white rounded-lg shadow-md">
-                  <div className="flex gap-2 p-4">
+                  <div
+                    className="flex gap-2 p-4 cursor-pointer"
+                    onClick={() => router.push(`/preview/${course.slug}`)}
+                  >
                     <Image
                       className="w-24 h-24 object-cover rounded-lg"
                       src={course.thumbnail}

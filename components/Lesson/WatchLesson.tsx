@@ -3,7 +3,8 @@ import { Lesson, useCourseStore } from "@/store/course";
 import { useState, useEffect } from "react";
 import VideoPlayer from "../VideoPlayer/VideoPlayer";
 import Image from "next/image";
-import { CircleCheck } from "lucide-react";
+import { ArrowLeft, CircleCheck } from "lucide-react";
+import Link from "next/link";
 
 export default function WatchLesson({ slug }: Props) {
   const {
@@ -43,13 +44,22 @@ export default function WatchLesson({ slug }: Props) {
     <div className="flex h-screen">
       {/* Video and details */}
       <div className="flex-1 py-4 px-8 overflow-y-auto">
-        <h1 className="font-bold text-3xl mb-4">{courseDetail.title}</h1>
+        <div className="flex items-center justify-between mb-4">
+          <Link
+            href="/dashboard"
+            className="flex mb-4"
+          >
+            <ArrowLeft className="inline mr-2" />
+            Back to Dashboard
+          </Link>
+          <h1 className="font-bold text-2xl mb-4">{courseDetail.title}</h1>
+        </div>
         {selectedLesson?.video_url && (
           <VideoPlayer
             url={selectedLesson.video_url}
             trackProgress
             videoId={selectedLesson.id.toString()}
-            className="rounded-xl"
+            className="rounded-xl aspect-video"
             last_duration={selectedLesson.last_position}
           />
         )}

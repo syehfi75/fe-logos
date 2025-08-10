@@ -59,6 +59,8 @@ export default function LoginPage() {
       setIsLoading(false);
       router.push("/dashboard");
     } catch (error: any) {
+      console.log('error', error);
+      
       setIsLoading(false);
       toast.error(error.response?.data?.messages.error || "Unknown error");
     }

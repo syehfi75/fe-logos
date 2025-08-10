@@ -11,3 +11,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-grostek);
 }
+
+.min-h-container {
+  height: calc(100vh - 80px);
+}

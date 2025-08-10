@@ -27,11 +27,9 @@ axiosInstance.interceptors.response.use(
         const refresh_token = Cookies.get("refresh_token");
         if (!refresh_token) throw new Error("No refresh token found");
 
-        const res = await axios.post(
-          `${API_AUTH}/api/refresh-token`,
-          null,
-          {headers: {Authorization: `Bearer ${refresh_token}`}}
-        );
+        const res = await axios.post(`${API_AUTH}/api/refresh-token`, null, {
+          headers: { Authorization: `Bearer ${refresh_token}` },
+        });
 
         const { access_token } = res.data.access_token;
         Cookies.set("access_token", access_token, { expires: 1 });
@@ -54,28 +52,114 @@ axiosInstance.interceptors.response.use(
 
 export default axiosInstance;
 
-export async function useFetch(
-  method: "get" | "post" | "put" | "delete",
+export const fetchUmum = async (
+  apiTerpilih: string,
   url: string,
-  data?: any,
-  options?: { auth?: boolean; headers?: Record<string, string> }
-) {
-  const config: any = {
-    method,
-    url,
-    data,
-    headers: { ...options?.headers },
-  };
-
-  if (options?.auth === false) {
-    delete config.headers.Authorization;
-  } else {
-    const token = Cookies.get("access_token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+  denganToken = true,
+  token: any
+) => {
+  try {
+    const response = await axios.get(`${apiTerpilih}${url}`, {
+      headers:
+        denganToken && token
+          ? {
+              Authorization: token,
+              // "Access-Control-Allow-Origin": "*",
+              "Content-Type": "application/json",
+            }
+          : {},
+    });
+    return {
+      success: true,
+      // message: response?.data?.data?.message || "Error tidak diketahui",
+      data: response.data,
+      responseCode: response.status,
+    };
+  } catch (e: any) {
+    return {
+      success: false,
+      message: JSON.stringify(
+        e?.response?.data?.message || "Error tidak diketahui"
+      ),
+      data: e?.response?.data || null,
+      responseCode: e?.response?.status || 400,
+    };
   }
+};
 
-  const res = await axiosInstance(config);
-  return res;
-}
+export const postUmum = async (
+  apiTerpilih: string,
+  postedData: any,
+  link: string | null,
+  denganToken = true,
+  token: any,
+  reqCancelToken: any
+) => {
+  try {
+    const response = await axios.post(`${apiTerpilih}${link}`, postedData, {
+      headers:
+        denganToken && token
+          ? {
+            Authorization: token,
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+          }
+          : {},
+      cancelToken: reqCancelToken.token,
+    });
+    return {
+      success: true,
+      message: null,
+      data: response.data,
+      postedData: postedData,
+      responseCode: response.status,
+    };
+  } catch (e: any) {
+    return {
+      success: false,
+      message: JSON.stringify(e),
+      data: e?.response?.data || null,
+      postedData: postedData,
+      responseCode: e?.response?.status || 400,
+    };
+  }
+};
+
+// type TJenisAPI = "apiBase";
+
+// const apiMap: Record<TJenisAPI, string> = {
+//   apiBase: process.env.NEXT_PUBLIC_API_AUTH!,
+// };
+
+// const cekAPI = (jenisApi: TJenisAPI) => {
+//   return apiMap[jenisApi] || API_AUTH;
+// };
+
+// export async function useFetch(
+//   method: "get" | "post" | "put" | "delete",
+//   jenisApi: TJenisAPI,
+//   url: string,
+//   data?: any,
+//   options?: { auth?: boolean; headers?: Record<string, string> }
+// ) {
+//   const axiosFetch = axios.create();
+//   const config: any = {
+//     baseURL: cekAPI(jenisApi),
+//     method,
+//     url,
+//     data,
+//     headers: { ...options?.headers },
+//   };
+
+//   if (options?.auth === false) {
+//     delete config.headers.Authorization;
+//   } else {
+//     const token = Cookies.get("access_token");
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//   }
+
+//   const res = await axiosFetch(config);
+//   return res;
+// }

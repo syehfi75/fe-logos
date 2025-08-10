@@ -1,6 +1,12 @@
 import { create } from "zustand";
 // import axios from "axios";
-import { useFetch } from "@/lib/axios";
+// import { useFetch } from "@/lib/axios";
+import {
+  getCourseDetail,
+  getCourses,
+  getResourcesCourseDetail,
+  toCourse,
+} from "@/services/courseApi";
 
 export interface Lesson {
   id: number;
@@ -28,7 +34,7 @@ interface Instructor {
   avatar: string;
 }
 
-interface CourseDetail {
+export interface CourseDetail {
   id: number;
   slug: string;
   title: string;
@@ -42,7 +48,7 @@ interface CourseDetail {
   lessons: Lesson[];
 }
 
-interface Course {
+export interface Course {
   id: string;
   title: string;
   thumbnail: string;
@@ -54,7 +60,7 @@ interface Course {
   lessons: Lesson[];
 }
 
-interface ResourceCourse {
+export interface ResourceCourse {
   resources: [];
 }
 
@@ -76,53 +82,32 @@ export const useCourseStore = create<CourseStore>((set) => ({
   fetchCourses: async () => {
     set({ loading: true });
     try {
-      const res = await useFetch(
-        "get",
-        `${process.env.NEXT_PUBLIC_API_AUTH}/dummy-api/courses`,
-        undefined,
-        { auth: true }
-      );
+      const basicCourses = await getCourses();
 
-      const basicCourses = res.data;
-      const detailedCourses = await Promise.all(
-        basicCourses.map(async (course: Course) => {
+      const detailedCourses: Course[] = await Promise.all(
+        basicCourses.map(async (course) => {
           try {
-            // const detailRes = await axios.get(
-            //   `${process.env.NEXT_PUBLIC_API_AUTH}/dummy-api/course/${course.slug}`
-            // );
-            const detailRes = await useFetch(
-              "get",
-              `${process.env.NEXT_PUBLIC_API_AUTH}/dummy-api/course/${course.slug}`,
-              undefined,
-              { auth: true }
-            );
-            return {
-              ...course,
-              ...detailRes.data,
-            };
-          } catch (err) {
-            console.error(`Error fetching detail for ${course.slug}:`, err);
-            return course;
+            const detail = await getCourseDetail(course.slug);
+            return toCourse(course, detail); // <- hasil pasti Course
+          } catch {
+            return toCourse(course); // fallback
           }
         })
       );
 
       set({ courses: detailedCourses, loading: false });
+
+      set({ courses: detailedCourses, loading: false });
     } catch (error) {
-      console.error("Error fetching courses: ", error);
+      console.error("Error fetching courses:", error);
       set({ loading: false });
     }
   },
   fetchCourseDetail: async (slug: string) => {
     set({ loading: true });
     try {
-      const courseDetail = await useFetch(
-        "get",
-        `${process.env.NEXT_PUBLIC_API_AUTH}/dummy-api/course/${slug}`,
-        undefined,
-        { auth: true }
-      );
-      set({ courseDetail: courseDetail.data, loading: false });
+      const courseDetail = await getCourseDetail(slug);
+      set({ courseDetail: courseDetail, loading: false });
     } catch (error) {
       console.error("Error fetching course detail: ", error);
       set({ loading: false });
@@ -131,14 +116,9 @@ export const useCourseStore = create<CourseStore>((set) => ({
   fetchResourcesCourseDetail: async (slug: string) => {
     set({ loading: true });
     try {
-      const res = await useFetch(
-        "get",
-        `${process.env.NEXT_PUBLIC_API_AUTH}/dummy-api/course/${slug}/resources`,
-        undefined,
-        { auth: true }
-      );
+      const res = await getResourcesCourseDetail(slug);
 
-      set({ resourcesCourseDetail: res.data, loading: false });
+      set({ resourcesCourseDetail: res, loading: false });
     } catch (error) {
       console.error("Error fetching course detail: ", error);
       set({ loading: false });

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import Cookies from "js-cookie";
-import axios, { useFetch } from "@/lib/axios";
+import axios from "@/lib/axios";
 import { toast } from "sonner";
 
 interface User {
@@ -28,15 +28,17 @@ export const useAuthStore = create<AuthState>()(
       refreshToken: null,
 
       login: async (email, password) => {
-        // const res = await axios.post(`${API_AUTH}/api/login`, {
-        //   email,
-        //   password,
-        // });
-        const res = await useFetch(
-          "post",
-          `${API_AUTH}/api/login`,
-          { email, password }
-        );
+        const res = await axios.post(`${API_AUTH}/api/login`, {
+          email,
+          password,
+        });        
+        // const res = await useFetch(
+        //   "post",
+        //   "apiBase",
+        //   `/api/login`,
+        //   { email, password }
+        // );
+        // const res = usePostUmum("apiBase", '/api/login')
 
         const { access_token, refresh_token, user } = res.data;
 
@@ -44,12 +46,7 @@ export const useAuthStore = create<AuthState>()(
         Cookies.set("refresh_token", refresh_token, { expires: 7 });
 
         // Masih kena cors
-        // const user = await useFetch(
-        //   "get",
-        //   `${API_AUTH}/api/user`,
-        //   undefined,
-        //   { auth: true }
-        // );
+        // const user = await axios.get(`${API_AUTH}/api/user`);
 
         set({
           accessToken: access_token,

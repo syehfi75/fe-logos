@@ -85,6 +85,7 @@ export default function WatchLesson({ slug }: Props) {
                   ? 0
                   : selectedLesson.last_position
               }
+              duration={selectedLesson.duration}
             />
             <div className="mt-3 flex gap-2 justify-end">
               <button

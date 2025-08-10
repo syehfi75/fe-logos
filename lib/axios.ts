@@ -123,6 +123,44 @@ export const postUmum = async (
   }
 };
 
+export const putUmum = async (
+  apiTerpilih: string,
+  postedData: any,
+  link: string | null,
+  denganToken = true,
+  token: any,
+  reqCancelToken: any
+) => {
+  try {
+    const response = await axios.put(`${apiTerpilih}${link}`, postedData, {
+      headers:
+        denganToken && token
+          ? {
+            Authorization: token,
+            "Content-Type": "application/json",
+          }
+          : {},
+      cancelToken: reqCancelToken.token,
+    });
+    return {
+      success: true,
+      message: null,
+      data: response.data,
+      postedData: postedData,
+      responseCode: response.status,
+    };
+  } catch (e: any) {
+    return {
+      success: false,
+      message: JSON.stringify(e),
+      data: e?.response?.data || null,
+      postedData: postedData,
+      responseCode: e?.response?.status || 400,
+    };
+  }
+};
+
+
 // type TJenisAPI = "apiBase";
 
 // const apiMap: Record<TJenisAPI, string> = {

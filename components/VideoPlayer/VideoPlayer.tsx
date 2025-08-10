@@ -1,5 +1,6 @@
 "use client";
 
+import { usePostUmum, usePutUmum } from "@/utils/useFetchUmum";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 
@@ -15,6 +16,7 @@ interface ReactVideoPlayerProps {
   trackProgress?: boolean;
   className?: string;
   last_duration?: number;
+  duration?: number;
 }
 
 export default function VideoPlayer({
@@ -29,17 +31,29 @@ export default function VideoPlayer({
   trackProgress = false,
   className,
   last_duration = 0,
+  duration = 0,
 }: ReactVideoPlayerProps) {
   const playerRef = useRef<any>(null);
   const lastSavedRef = useRef<number>(0);
 
   const STORAGE_KEY = `video-progress-${videoId}`;
+  const [postProgress] = usePutUmum(
+    "apiBase",
+    `/dummy-api/lessons/${videoId}/progress`
+  );
 
-  const handleProgress = () => {
+  const handleProgress = async () => {
     if (trackProgress) {
       const now = Date.now();
+      const body = {
+        last_position: Math.round(playerRef.current.currentTime),
+        video_duration: duration,
+      };
       if (now - lastSavedRef.current > 30000) {
-        localStorage.setItem(STORAGE_KEY, String(Math.round(playerRef.current.currentTime)));
+        const result = await postProgress(body);
+        if (result?.status) {
+          console.log("Progress saved successfully", result?.data);
+        }
         lastSavedRef.current = now;
       }
     }

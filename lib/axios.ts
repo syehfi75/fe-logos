@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
           headers: { Authorization: `Bearer ${refresh_token}` },
         });
 
-        const { access_token } = res.data.access_token;
+        const { access_token } = res.data;        
         Cookies.set("access_token", access_token, { expires: 1 });
 
         originalRequest.headers.Authorization = `Bearer ${access_token}`;

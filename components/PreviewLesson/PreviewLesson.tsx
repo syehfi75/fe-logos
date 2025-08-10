@@ -2,15 +2,15 @@
 
 import "./style.css";
 import { useCourseStore } from "@/store/course";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
 import VideoPlayer from "../VideoPlayer/VideoPlayer";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ListResources from "./ListResource";
 
 export default function PreviewLesson({ slug }: Props) {
-  const router = useRouter()
+  const router = useRouter();
   const {
     courseDetail,
     resourcesCourseDetail,
@@ -32,9 +32,9 @@ export default function PreviewLesson({ slug }: Props) {
   }, []);
 
   useEffect(() => {
-    document.body.style.backgroundColor = 'black';
+    document.body.style.backgroundColor = "black";
     return () => {
-      document.body.style.backgroundColor = '';
+      document.body.style.backgroundColor = "";
     };
   }, []);
 
@@ -57,7 +57,10 @@ export default function PreviewLesson({ slug }: Props) {
               scrolled ? "bg-black" : "bg-transparent"
             } transition-all duration-500 ease-in-out}`}
           >
-            <ArrowLeft className="cursor-pointer" onClick={() => router.back()} />
+            <ArrowLeft
+              className="cursor-pointer"
+              onClick={() => router.back()}
+            />
             <h1 className="font-bold text-xl w-full text-center">
               {courseDetail?.title}
             </h1>
@@ -105,21 +108,25 @@ export default function PreviewLesson({ slug }: Props) {
           </div>
         </div>
         {/* Tabs */}
-        <div className="flex gap-6 text-white text-2xl mt-8 border-b border-gray-700 pb-4">
+        <div className="flex gap-6 text-white text-2xl mt-8 border-b border-gray-700">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`transition-all ease-in-out ${
+              className={`relative pb-2 transition-colors duration-300 ${
                 activeTab === tab
-                  ? "border-b-2 border-white font-semibold"
+                  ? "text-white font-semibold"
                   : "text-gray-400 hover:text-white"
               }`}
             >
               {tab}
+              {activeTab === tab && (
+                <span className="absolute left-0 -bottom-[1px] w-full h-[3px] bg-purple-400 rounded transition-all duration-300"></span>
+              )}
             </button>
           ))}
         </div>
+
         <div className="mt-6 text-white">
           {activeTab === "Overview" && <p>Ini halaman Overview</p>}
           {activeTab === "Lessons" && (
@@ -148,7 +155,7 @@ export default function PreviewLesson({ slug }: Props) {
                       </p>
                     </div>
                     <div className="ml-auto flex items-center gap-2">
-                      <ArrowRight />
+                      <ChevronRight />
                     </div>
                   </div>
                 </div>
@@ -159,45 +166,46 @@ export default function PreviewLesson({ slug }: Props) {
             <div>
               {resourcesCourseDetail?.resources &&
                 resourcesCourseDetail.resources.length > 0 && (
-                  <div className="mt-6">
-                    <ul className="space-y-2">
-                      {resourcesCourseDetail.resources.map((resource: any) => (
-                        <li
-                          key={resource.id}
-                          className="flex items-center gap-2 p-4 border-b border-gray-700 hover:bg-gray-800 transition-all ease-in-out duration-500"
-                        >
-                          <div className="flex">
-                            <Image
-                              src={
-                                resource.thumbnail || "/default-thumbnail.png"
-                              }
-                              alt={resource.title}
-                              width={150}
-                              height={300}
-                              className="rounded-lg mr-2"
-                            />
-                          </div>
-                          <div className="flex flex-col">
-                            <h1>{resource.title}</h1>
-                            <p className="text-gray-300 font-bold">
-                              {courseDetail?.instructor.name}
-                            </p>
-                            <Link
-                              href={resource.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 mt-3"
-                            >
-                              Download
-                            </Link>
-                          </div>
-                          {/* <span className="text-sm text-gray-500">
-                            ({resource.type})
-                          </span> */}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <ListResources resources={resourcesCourseDetail.resources} typeOrder={['pdf']} />
+                  // <div className="mt-6">
+                  //   <ul className="space-y-2">
+                  //     {resourcesCourseDetail.resources.map((resource: any) => (
+                  //       <li
+                  //         key={resource.id}
+                  //         className="flex items-center gap-2 p-4 border-b border-gray-700 hover:bg-gray-800 transition-all ease-in-out duration-500"
+                  //       >
+                  //         <div className="flex">
+                  //           <Image
+                  //             src={
+                  //               resource.thumbnail || "/default-thumbnail.png"
+                  //             }
+                  //             alt={resource.title}
+                  //             width={150}
+                  //             height={300}
+                  //             className="rounded-lg mr-2"
+                  //           />
+                  //         </div>
+                  //         <div className="flex flex-col">
+                  //           <h1>{resource.title}</h1>
+                  //           <p className="text-gray-300 font-bold">
+                  //             {courseDetail?.instructor.name}
+                  //           </p>
+                  //           <Link
+                  //             href={resource.url}
+                  //             target="_blank"
+                  //             rel="noopener noreferrer"
+                  //             className="text-blue-600 mt-3"
+                  //           >
+                  //             Download
+                  //           </Link>
+                  //         </div>
+                  //         {/* <span className="text-sm text-gray-500">
+                  //           ({resource.type})
+                  //         </span> */}
+                  //       </li>
+                  //     ))}
+                  //   </ul>
+                  // </div>
                 )}
             </div>
           )}

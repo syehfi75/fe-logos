@@ -1,5 +1,6 @@
 "use client";
 import { usePostUmum } from "@/utils/useFetchUmum";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 type PaymentMethod = {
@@ -44,6 +45,7 @@ export default function PaymentList({ methods, typeOrder, selectedPlan }: Props)
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
   const [postPayment] = usePostUmum("apiBase", "/api/user/subscribe/manual-with-paymentmethod");
+  const router = useRouter();
 
   const handleSubmit = async () => {
     if (!selectedCode || !selectedPlan) return;
@@ -51,13 +53,14 @@ export default function PaymentList({ methods, typeOrder, selectedPlan }: Props)
       plan_id: selectedPlan,
       payment_method: selectedCode,
     };
-    console.log('body', body);
     
     const result = await postPayment(body);
-    if (result?.success) {
+    console.log('result', result);
+    if (result?.status) {
       console.log("Subscription successful:", result?.data);
+      router.push(result?.data?.invoice_url);
     } else {
-      console.error("Subscription failed:", result?.message);
+      console.error("Subscription failed:", result);
     }
   };
 

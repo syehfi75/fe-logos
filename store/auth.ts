@@ -31,27 +31,22 @@ export const useAuthStore = create<AuthState>()(
         const res = await axios.post(`${API_AUTH}/api/login`, {
           email,
           password,
-        });        
-        // const res = await useFetch(
-        //   "post",
-        //   "apiBase",
-        //   `/api/login`,
-        //   { email, password }
-        // );
-        // const res = usePostUmum("apiBase", '/api/login')
-
-        const { access_token, refresh_token, user } = res.data;
+        });
+        const { access_token, refresh_token } = res.data;
 
         Cookies.set("access_token", access_token, { expires: 1 });
         Cookies.set("refresh_token", refresh_token, { expires: 7 });
 
-        // Masih kena cors
-        // const user = await axios.get(`${API_AUTH}/api/user`);
+      const user = await axios.get(`${API_AUTH}/api/profile`, {
+          headers: { Authorization: `Bearer ${access_token}` },
+        });
+        console.log('user', user);
+        
 
         set({
           accessToken: access_token,
           refreshToken: refresh_token,
-          user: user,
+          user: user.data,
         });
       },
 

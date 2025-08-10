@@ -4,6 +4,7 @@ import { useEffect, useMemo } from "react";
 import Navbar from "../Navbar/navbar";
 import PaymentList from "./PaymentList";
 import { useFetchUmum } from "@/utils/useFetchUmum";
+import { formatPrice } from "@/utils/formatPrice";
 
 export default function SubscribePage({ slug }: Props) {
   const { list, loading, fetchPlans } = usePaymentStore();
@@ -29,15 +30,6 @@ export default function SubscribePage({ slug }: Props) {
     day: "numeric",
     year: "numeric",
   });
-
-  const formatPrice = (price: string) => {
-    const rupiah = Number(price).toLocaleString("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    });
-    return rupiah;
-  };
 
   return (
     <>

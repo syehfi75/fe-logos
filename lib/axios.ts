@@ -63,8 +63,7 @@ export const fetchUmum = async (
       headers:
         denganToken && token
           ? {
-              Authorization: token,
-              // "Access-Control-Allow-Origin": "*",
+              Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             }
           : {},
@@ -100,8 +99,7 @@ export const postUmum = async (
       headers:
         denganToken && token
           ? {
-            Authorization: token,
-            "Access-Control-Allow-Origin": "*",
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           }
           : {},

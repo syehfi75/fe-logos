@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import Modal from "../Modal/Modal";
 import { useRouter } from "next/navigation";
 import { usePaymentStore } from "@/store/payment";
+import { formatPrice } from "@/utils/formatPrice";
 
 function Navbar() {
   const user = useAuthStore((state) => state);
@@ -16,7 +17,6 @@ function Navbar() {
   const [openModal, setOpenModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { list, fetchPlans } = usePaymentStore();
-  
 
   useEffect(() => {
     fetchPlans();
@@ -127,29 +127,33 @@ function Navbar() {
           size="xl"
         >
           <div>
-            {list?.map((item: any) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between p-4 border-b last:border-b-0 hover:bg-gray-100 cursor-pointer"
-                onClick={() => {
-                  router.push(`/subscribe/${item.type}`);
-                  setOpenModal(false);
-                }}
-              >
-                <div className="flex items-center space-x-4">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-12 h-12 rounded-full"
-                  />
-                  <div>
-                    <h3 className="text-lg font-semibold">{item.name}</h3>
-                    <p className="text-sm text-gray-600">{item.description}</p>
+            {list
+              ?.filter((item: any) => item.id !== "1" && item.id !== "4")
+              .map((item: any) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between p-4 border-b last:border-b-0 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => {
+                    router.push(`/subscribe/${item.type}`);
+                    setOpenModal(false);
+                  }}
+                >
+                  <div className="flex items-center space-x-4">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-12 h-12 rounded-full"
+                    />
+                    <div>
+                      <h3 className="text-lg font-semibold">{item.name}</h3>
+                      <p className="text-sm text-gray-600">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
+                  <span className="text-lg font-bold">{formatPrice(item.price)}</span>
                 </div>
-                <span className="text-lg font-bold">{item.price}</span>
-              </div>
-            ))}
+              ))}
             <div className="p-4 text-center">
               <p className="text-sm text-gray-600">
                 Choose a plan that suits you best.

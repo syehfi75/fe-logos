@@ -5,7 +5,7 @@ import axios, { CancelTokenSource } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface IResponsePost<T> {
-  success: boolean;
+  status: boolean;
   message: null | string;
   /** data atau error */
   data: T;
@@ -77,7 +77,7 @@ export function usePostUmum<T = any>(
   const post = useCallback(
     async (dataPost: any) => {
       const batalkan = {
-        success: false,
+        status: false,
         message: "link kosong",
         data: null,
         postedData: dataPost,

@@ -56,8 +56,9 @@ export default function ActivateAccount({ slug }: Props) {
         }
       );
       setIsLoading(false);
+      setActivationStatus("success")
       toast.success(
-        "Please confirm your account by clicking the activation link in the email we have sent."
+        "Success! Your account has been activated. You can now log in."
       );
     } catch (error: any) {
       console.error("Login gagal:", error);

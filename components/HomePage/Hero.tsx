@@ -25,12 +25,11 @@ export default function HeroHomePage() {
             <p className="text-2xl text-[#CED1D7] font-medium">
               Be part of the world’s most powerful life transformation platform
             </p>
-            <div className="w-full mt-9">
+            <div className="w-full h-[600px] mt-9 rounded-xl"> 
               <VideoPlayer
-                url="https://www.w3schools.com/html/mov_bbb.mp4"
+                url="https://www.youtube.com/watch?v=vyzcyJJmBzc"
                 playing
                 muted
-                className="aspect-video"
               />
             </div>
           </div>

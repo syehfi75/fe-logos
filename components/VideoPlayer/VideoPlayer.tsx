@@ -68,21 +68,19 @@ export default function VideoPlayer({
   };
 
   return (
-    <div className={`${className}`}>
-      <ReactPlayer
-        ref={playerRef}
-        src={url}
-        controls={controls}
-        playing={playing}
-        loop={loop}
-        muted={muted}
-        width={width}
-        height={height}
-        onTimeUpdate={handleProgress}
-        onEnded={handleEnded}
-        className={`${className}`}
-        onReady={() => onReady()}
-      />
-    </div>
+    <ReactPlayer
+      ref={playerRef}
+      src={url}
+      controls={controls}
+      playing={playing}
+      loop={loop}
+      muted={muted}
+      width={width}
+      height={height}
+      onTimeUpdate={handleProgress}
+      onEnded={handleEnded}
+      // className="absolute inset-0"
+      onReady={() => onReady()}
+    />
   );
 }

@@ -4,9 +4,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import "./styles/swiper-styles.css"; // kita akan styling aktif/pasif di sini
+import "./styles/swiper-styles.css";
 import { useRef } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { betters } from "./assets";
+import Image from "next/image";
 
 const data = [
   "CAREER GROWTH",
@@ -14,10 +16,7 @@ const data = [
   "MASTER MY BODY",
   "TRANSITION IN LIFE",
   "LOVE CONNECTION",
-  "LOVE CONNECTION",
-  "LOVE CONNECTION",
-  "LOVE CONNECTION",
-  "LOVE CONNECTION",
+  "SPIRITUAL SEEKER",
 ];
 
 export default function BetterYou() {
@@ -28,20 +27,19 @@ export default function BetterYou() {
     <div className="relative py-8 mt-32">
       <div className="container mx-auto px-20 w-full">
         <div className="flex flex-col gap-4 w-2/3">
-          <p className="uppercase text-logos-green">immersive experiences</p>
-          <h4 className="text-4xl font-bold">
-            1,000+ customised tracks to elevate your mindset and feelings
-          </h4>
+          <p className="uppercase text-logos-green">begin your journey</p>
+          <h4 className="text-4xl font-bold">A better you</h4>
           <p className="text-lg text-gray-500">
-            With a push of a button — experience brain changing hypnotic audios,
-            sound healings, meditations and instant mood elevations. Take charge
-            of your mind.
+            Grow your business, elevate your career, establish deep connections,
+            uplift your health and more. <b>Tell us your goals</b>, and become a
+            better you like never before.
           </p>
         </div>
       </div>
       <Swiper
         modules={[Navigation]}
         slidesPerView="auto"
+        initialSlide={2}
         centeredSlides
         spaceBetween={20}
         navigation={{
@@ -53,13 +51,21 @@ export default function BetterYou() {
         {data.map((title, i) => (
           <SwiperSlide
             key={i}
-            className="!w-[288px] !h-[431px] bg-gray-500 rounded-xl overflow-hidden slide-card"
+            className="!w-[288px] !h-[431px] rounded-xl overflow-hidden slide-card"
           >
-            <div className="flex flex-col justify-end h-full p-4 text-white font-bold text-xl">
-              <p className="text-sm font-normal opacity-80 mb-1">
+            {/* background image */}
+            <Image
+              src={betters[i]}
+              alt={title}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+
+            {/* overlay teks */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent text-white font-bold text-center">
+              <p className="text-lg font-normal opacity-80 mb-1">
                 I'm looking to
               </p>
-              <h2>{title}</h2>
+              <h2 className="text-3xl font-bold">{title}</h2>
             </div>
           </SwiperSlide>
         ))}

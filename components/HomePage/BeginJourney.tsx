@@ -2,6 +2,8 @@
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import Image from "next/image";
+import { banner1, banner2, banner3, banner4, banner5 } from "./assets";
 
 export default function BeginJourney() {
   const slideShowRef = useRef<HTMLDivElement>(null);
@@ -44,7 +46,7 @@ export default function BeginJourney() {
 
   return (
     <>
-      <div className="container mx-auto px-20 overflow-hidden">
+      <div className="container mx-auto px-20 overflow-hidden mt-8">
         <div className="flex flex-col justify-center items-center gap-4 mb-10">
           <h1 className="text-7xl font-bold">Begin your journey today</h1>
           <p className="text-2xl text-gray-500 text-center">
@@ -73,10 +75,21 @@ export default function BeginJourney() {
         </div>
         <div className="overflow-hidden w-full mt-6">
           <div ref={slideShowRef} className="flex gap-4 cursor-pointer w-max">
-            <div className="slide bg-gray-500 rounded-md w-[450px] h-[200px] shrink-0"></div>
-            <div className="slide bg-gray-500 rounded-md w-[450px] h-[200px] shrink-0"></div>
-            <div className="slide bg-gray-500 rounded-md w-[450px] h-[200px] shrink-0"></div>
-            <div className="slide bg-gray-500 rounded-md w-[450px] h-[200px] shrink-0"></div>
+            <div className="slide rounded-md w-[450px] h-[200px] shrink-0">
+              <Image src={banner1} alt="" />
+            </div>
+            <div className="slide rounded-md w-[450px] h-[200px] shrink-0">
+              <Image src={banner2} alt="" />
+            </div>
+            <div className="slide rounded-md w-[450px] h-[200px] shrink-0">
+              <Image src={banner3} alt="" />
+            </div>
+            <div className="slide rounded-md w-[450px] h-[200px] shrink-0">
+              <Image src={banner4} alt="" />
+            </div>
+            <div className="slide rounded-md w-[450px] h-[200px] shrink-0">
+              <Image src={banner5} alt="" />
+            </div>
           </div>
         </div>
       </div>

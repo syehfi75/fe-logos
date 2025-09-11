@@ -2,6 +2,8 @@
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import Image from "next/image";
+import { covers, covers2, phone } from "./assets";
 
 export default function Experiences() {
   const expeRef = useRef<HTMLDivElement>(null);
@@ -63,22 +65,25 @@ export default function Experiences() {
         </div>
       </div>
 
-      <div className="overflow-hidden relative w-full h-full mt-6">
-        <div className="bg-gray-950 w-[150px] h-[250px] absolute left-2/4 top-0 z-10 -translate-x-1/2"></div>
-        <div ref={expeRef} className="flex gap-4 w-max">
-          {[...Array(20)].map((_, index) => (
-            <div
-              key={index}
-              className="bg-gray-500 rounded-md w-[150px] h-[150px] shrink-0"
-            ></div>
+      <div className="overflow-hidden relative w-full h-4/5 mt-6 py-[49px]">
+        <div className="w-[380px] h-full absolute left-2/4 top-0 z-10 -translate-x-1/2">
+          <Image src={phone} alt="" />
+        </div>
+        <div ref={expeRef} className="flex w-max">
+          {covers.map((src, index) => (
+            <div key={index} className="w-[200px] h-[200px] shrink-0">
+              <Image src={src} alt="" className="rounded-md" />
+            </div>
           ))}
         </div>
         <div ref={expeRef2} className="flex gap-4 w-max mt-4">
-          {[...Array(20)].map((_, index) => (
+          {covers2.map((src, index) => (
             <div
               key={index}
-              className="bg-gray-500 rounded-md w-[150px] h-[150px] shrink-0"
-            ></div>
+              className="w-[200px] h-[200px] shrink-0"
+            >
+              <Image src={src} alt="" className="rounded-md" />
+            </div>
           ))}
         </div>
       </div>

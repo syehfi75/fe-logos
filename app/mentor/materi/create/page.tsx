@@ -130,7 +130,7 @@ export default function CreateMateriPage() {
               </div>
             </div>
             <button
-              className="bg-blue-500 text-white px-4 py-2 rounded w-max"
+              className="bg-blue-500 text-white px-4 py-2 rounded w-max cursor-pointer"
               onClick={handleSubmit}
             >
               Buat materi {filteredItemsById?.[0]?.title}

@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { usePostUmumToken } from "@/utils/useFetchUmum";
 import { useState } from "react";
 
-export default function CreateKursusPage() {
+export default function EditKursusPage() {
   const [files, setFiles] = useState<File[]>([]);
   const [selectedOption, setSelectedOption] = useState("1");
   const [form, setForm] = useState({

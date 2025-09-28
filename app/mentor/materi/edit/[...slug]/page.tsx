@@ -1,0 +1,123 @@
+"use client";
+import Dropzone from "@/components/MentorPage/dropzone/Dropzone";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useMentorStore } from "@/store/mentor";
+import { usePostUmumToken } from "@/utils/useFetchUmum";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+export default function EditMateriPage() {
+  const [selectedId, setSelectedId] = useState<string>("");
+  const [thumbnail, setThumbnail] = useState<File[]>([]);
+  const [video, setVideo] = useState<File[]>([]);
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+  });
+  const handleForm = (e: any) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  const [postMateri] = usePostUmumToken(
+    "apiBase",
+    `/api/mentor/courses/${selectedId}/lessons`
+  );
+
+  const { mentorKursus, ensureMentorKursus } = useMentorStore();
+  useEffect(() => {
+    ensureMentorKursus();
+  }, []);
+
+  useEffect(() => {
+    if (selectedId) {
+      setForm({ title: "", description: "" });
+      setThumbnail([]);
+      setVideo([]);
+    }
+  }, [selectedId]);
+
+  const filteredItemsById = mentorKursus?.filter(
+    (item) => item.id === selectedId
+  );
+
+  const handleSubmit = async () => {
+    let formData = new FormData();
+    formData.append("title", form.title);
+    formData.append("description", form.description);
+    formData.append(`thumbnail`, thumbnail[0]);
+    formData.append(`video`, video[0]);
+    try {
+      const result = await postMateri(formData);
+      console.log("result", result);
+      setForm({ title: "", description: "" });
+      setThumbnail([]);
+      setVideo([]);
+      toast.success(
+        "Materi " +
+          filteredItemsById?.[0]?.title +
+          " berhasil dibuat!. Tunggu sekitar 2 menit"
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <>
+      <div>
+        <h1 className="text-2xl font-bold mb-4">
+          Buat materi baru: {filteredItemsById?.[0]?.title}
+        </h1>
+      </div>
+      <div className="flex flex-col">
+        <div className="mb-4">
+          <label htmlFor="title">Title *</label>
+          <Input
+            placeholder="Nama Kursus"
+            id="title"
+            name="title"
+            required
+            onChange={handleForm}
+            value={form.title}
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="description">Deskripsi</label>
+          <Textarea
+            id="description"
+            name="description"
+            required
+            onChange={handleForm}
+            value={form.description}
+          />
+        </div>
+        <div className="mb-4 flex gap-16">
+          <div>
+            <label>Thumbnail</label>
+            <Dropzone
+              key={selectedId + "-thumb"}
+              multiple={false}
+              accept="image/*"
+              onChange={setThumbnail}
+            />
+          </div>
+          <div>
+            <label>Video</label>
+            <Dropzone
+              key={selectedId + "-video"}
+              multiple={false}
+              accept="video/*"
+              onChange={setVideo}
+            />
+          </div>
+        </div>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded w-max cursor-pointer"
+          onClick={handleSubmit}
+        >
+          Buat materi {filteredItemsById?.[0]?.title}
+        </button>
+      </div>
+    </>
+  );
+}

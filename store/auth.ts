@@ -18,6 +18,14 @@ interface AuthState {
   logout: () => void;
 }
 
+interface AuthMentorState {
+  user: User | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  loginMentor: (email: string, password: string) => Promise<void>;
+  logout: () => void;
+}
+
 const API_AUTH = process.env.NEXT_PUBLIC_API_AUTH;
 
 export const useAuthStore = create<AuthState>()(
@@ -40,7 +48,7 @@ export const useAuthStore = create<AuthState>()(
       const user = await axios.get(`${API_AUTH}/api/profile`, {
           headers: { Authorization: `Bearer ${access_token}` },
         });
-        console.log('user', user);
+        // console.log('user', user);
         
 
         set({
@@ -62,6 +70,51 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
+      partialize: (state) => ({
+        user: state.user,
+        accessToken: state.accessToken,
+        // refreshToken: state.refreshToken,
+      }),
+    }
+  )
+);
+
+export const useAuthMentorStore = create<AuthMentorState>()(
+  persist(
+    (set) => ({
+      user: null,
+      accessToken: null,
+      refreshToken: null,
+
+      loginMentor: async (email, password) => {
+        const res = await axios.post(`${API_AUTH}/api/loginmentor`, {
+          email,
+          password,
+        });
+        const { access_token, refresh_token, expires_in, refresh_expires_in, user } = res.data;
+
+        Cookies.set("access_token", access_token, { expires: expires_in });
+        Cookies.set("refresh_token", refresh_token, { expires: refresh_expires_in });
+
+        set({
+          accessToken: access_token,
+          refreshToken: refresh_token,
+          user: user,
+        });
+      },
+
+      logout: () => {
+        Cookies.remove("access_token");
+        Cookies.remove("refresh_token");
+        set({
+          user: null,
+          accessToken: null,
+          refreshToken: null,
+        });
+      },
+    }),
+    {
+      name: "auth-mentor-storage",
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,

@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       new URL("https://images.pexels.com/**"),
       new URL("https://dummyimage.com/**"),
+      new URL("https://api.afzan.co/**"),
     ],
   },
 };

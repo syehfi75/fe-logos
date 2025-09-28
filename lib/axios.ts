@@ -86,6 +86,40 @@ export const fetchUmum = async (
   }
 };
 
+export const fetchUmumToken = async (
+  apiTerpilih: string,
+  url: string,
+  denganToken = true,
+  token: any
+) => {
+  try {
+    const response = await axiosInstance.get(`${apiTerpilih}${url}`, {
+      headers:
+        denganToken && token
+          ? {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            }
+          : {},
+    });
+    return {
+      success: true,
+      // message: response?.data?.data?.message || "Error tidak diketahui",
+      data: response.data,
+      responseCode: response.status,
+    };
+  } catch (e: any) {
+    return {
+      success: false,
+      message: JSON.stringify(
+        e?.response?.data?.message || "Error tidak diketahui"
+      ),
+      data: e?.response?.data || null,
+      responseCode: e?.response?.status || 400,
+    };
+  }
+};
+
 export const postUmum = async (
   apiTerpilih: string,
   postedData: any,
@@ -101,6 +135,43 @@ export const postUmum = async (
           ? {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
+          }
+          : {},
+      cancelToken: reqCancelToken.token,
+    });
+    return {
+      success: true,
+      message: null,
+      data: response.data,
+      postedData: postedData,
+      responseCode: response.status,
+    };
+  } catch (e: any) {
+    return {
+      success: false,
+      message: JSON.stringify(e),
+      data: e?.response?.data || null,
+      postedData: postedData,
+      responseCode: e?.response?.status || 400,
+    };
+  }
+};
+
+export const postUmumToken = async (
+  apiTerpilih: string,
+  postedData: any,
+  link: string | null,
+  denganToken = true,
+  token: any,
+  reqCancelToken: any
+) => {
+  try {
+    const response = await axiosInstance.post(`${apiTerpilih}${link}`, postedData, {
+      headers:
+        denganToken && token
+          ? {
+            Authorization: `Bearer ${token}`,
+            // "Content-Type": "application/json",
           }
           : {},
       cancelToken: reqCancelToken.token,

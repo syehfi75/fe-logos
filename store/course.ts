@@ -97,7 +97,7 @@ export const useCourseStore = create<CourseStore>((set) => ({
 
       set({ courses: detailedCourses, loading: false });
 
-      set({ courses: detailedCourses, loading: false });
+      // set({ courses: detailedCourses, loading: false });
     } catch (error) {
       console.error("Error fetching courses:", error);
       set({ loading: false });

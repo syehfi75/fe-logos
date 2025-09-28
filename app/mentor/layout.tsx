@@ -1,7 +1,14 @@
 "use client";
-import { Sidebar, SidebarGroup, SidebarTopSection } from "@/components/Sidebar/Sidebar";
+
+import {
+  Sidebar,
+  SidebarGroup,
+  SidebarTopSection,
+} from "@/components/Sidebar/Sidebar";
 import { Home } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 const topSections: SidebarTopSection[] = [
   {
@@ -25,9 +32,9 @@ const mentorMenu: SidebarGroup[] = [
     label: "Kursus",
     defaultOpen: true,
     links: [
-      { label: "Daftar kursus", href: "/mentor/kursus", },
+      { label: "Daftar kursus", href: "/mentor/kursus" },
       { label: "Buat kursus baru", href: "/mentor/kursus/create" },
-      { label: "Materi", href: "/mentor/materi", },
+      { label: "Materi", href: "/mentor/materi" },
       { label: "Buat materi baru", href: "/mentor/materi/create" },
     ],
   },
@@ -41,6 +48,14 @@ export default function MentorLayout({
   const paths = ["/mentor/login"];
   const pathname = usePathname();
   const hidden = paths.some((p) => pathname.startsWith(p));
+  
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("auth-mentor-storage");  
+    if (!storedUserData && !hidden) {
+      toast.error("Silahkan login terlebih dahulu");
+      window.location.href = "/mentor/login";
+    }
+  }, []);
 
   return (
     <div className="flex h-screen">
@@ -48,8 +63,8 @@ export default function MentorLayout({
         <Sidebar
           title="Mentor Admin"
           headerHref="/mentor"
-          topSections={topSections} // <<— banyak non-collapsible link
-          groups={mentorMenu} // collapsible tetap bisa dipakai
+          topSections={topSections}
+          groups={mentorMenu}
         />
       )}
       <main className="flex-1 bg-gray-100 p-6 overflow-y-auto">{children}</main>

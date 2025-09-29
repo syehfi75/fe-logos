@@ -3,10 +3,12 @@ import Dropzone from "@/components/MentorPage/dropzone/Dropzone";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useFetchUmumToken, usePostUmumToken } from "@/utils/useFetchUmum";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function EditKursusPage() {
+  const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const [files, setFiles] = useState<File[]>([]);
   const [selectedOption, setSelectedOption] = useState("1");
@@ -21,11 +23,12 @@ export default function EditKursusPage() {
 
   useEffect(() => {
     if (listCourse) {
-      const lesson = listCourse;
-      setForm({ title: lesson?.title, description: lesson?.description });
+      const course = listCourse;
+      setForm({ title: course?.title, description: course?.description });
+      setSelectedOption(course?.access_type.toString());
     }
   }, [listCourse]);
-  console.log(listCourse);
+  // console.log(listCourse);
 
   const [postCourse] = usePostUmumToken("apiBase", `/api/mentor/courses/${id}`);
   const handleForm = (e: any) => {
@@ -43,7 +46,6 @@ export default function EditKursusPage() {
   };
 
   const handleSubmit = async () => {
-    // Handle form submission logic here
     let formData = new FormData();
     formData.append("title", form.title);
     formData.append("description", form.description);
@@ -51,7 +53,12 @@ export default function EditKursusPage() {
     formData.append(`thumbnail`, files[0]);
     try {
       const result = await postCourse(formData);
-      console.log("result", result);
+      if (result?.status) {
+        setForm({ title: "", description: "" });
+        setFiles([]);
+        toast.success("Kursus " + listCourse?.title + " berhasil di edit!");
+        router.push("/mentor/kursus");
+      }
     } catch (error) {
       console.error(error);
     }
@@ -59,7 +66,7 @@ export default function EditKursusPage() {
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold mb-4">Edit kursus: </h1>
+        <h1 className="text-2xl font-bold mb-4">Edit kursus: {listCourse?.title}</h1>
       </div>
       <div className="flex flex-col">
         <div className="mb-4">
@@ -70,6 +77,7 @@ export default function EditKursusPage() {
             name="title"
             required
             onChange={handleForm}
+            value={form.title}
           />
         </div>
         <div className="mb-4">
@@ -79,6 +87,7 @@ export default function EditKursusPage() {
             name="description"
             required
             onChange={handleForm}
+            value={form.description}
           />
         </div>
         <div className="mb-4 flex gap-16">
@@ -105,10 +114,10 @@ export default function EditKursusPage() {
           </div>
         </div>
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded w-32 cursor-pointer"
+          className="bg-blue-500 text-white px-4 py-2 rounded w-max cursor-pointer"
           onClick={handleSubmit}
         >
-          Edit Kursus
+          Edit Kursus {listCourse?.title}
         </button>
       </div>
     </>

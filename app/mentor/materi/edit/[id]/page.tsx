@@ -46,11 +46,12 @@ export default function EditMateriPage() {
     formData.append(`video`, video[0]);
     try {
       const result = await postMateri(formData);
-      console.log("result", result);
-      setForm({ title: "", description: "" });
-      setThumbnail([]);
-      setVideo([]);
-      toast.success("Materi " + listCourse?.title + " berhasil di edit!");
+      if (result?.status) {
+        setForm({ title: "", description: "" });
+        setThumbnail([]);
+        setVideo([]);
+        toast.success("Materi " + listCourse?.title + " berhasil di edit!");
+      }
     } catch (error) {
       console.error(error);
     }

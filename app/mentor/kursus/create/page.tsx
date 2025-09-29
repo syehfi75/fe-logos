@@ -2,10 +2,14 @@
 import Dropzone from "@/components/MentorPage/dropzone/Dropzone";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useMentorStore } from "@/store/mentor";
 import { usePostUmumToken } from "@/utils/useFetchUmum";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function CreateKursusPage() {
+  const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [selectedOption, setSelectedOption] = useState("1");
   const [form, setForm] = useState({
@@ -28,7 +32,6 @@ export default function CreateKursusPage() {
   };
 
   const handleSubmit = async () => {
-    // Handle form submission logic here
     let formData = new FormData();
     formData.append("title", form.title);
     formData.append("description", form.description);
@@ -36,7 +39,11 @@ export default function CreateKursusPage() {
     formData.append(`thumbnail`, files[0]);
     try {
       const result = await postCourse(formData);
-      console.log("result", result);
+      if (result?.status) {
+        await useMentorStore.getState().fetchMentorKursus();
+        toast.success("Kursus " + form.title + " berhasil dibuat!.");
+        router.push("/mentor/kursus");
+      }
     } catch (error) {
       console.error(error);
     }
@@ -55,6 +62,7 @@ export default function CreateKursusPage() {
             name="title"
             required
             onChange={handleForm}
+            value={form.title}
           />
         </div>
         <div className="mb-4">
@@ -64,12 +72,17 @@ export default function CreateKursusPage() {
             name="description"
             required
             onChange={handleForm}
+            value={form.description}
           />
         </div>
         <div className="mb-4 flex gap-16">
           <div>
             <label>Thumbnail</label>
-            <Dropzone multiple={false} onChange={setFiles} />
+            <Dropzone
+              multiple={false}
+              onChange={setFiles}
+              // key={"thumb"}
+            />
           </div>
           <div>
             <label>Tipe kursus</label>

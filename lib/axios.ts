@@ -231,6 +231,38 @@ export const putUmum = async (
   }
 };
 
+export const deleteUmumToken = async (
+  apiTerpilih: string,
+  link: string | null,
+  denganToken = true,
+  token: any
+) => {
+  try {
+    const response = await axiosInstance.delete(`${apiTerpilih}${link}`, {
+      headers:
+        denganToken && token
+          ? {
+            Authorization: `Bearer ${token}`,
+            // "Content-Type": "application/json",
+          }
+          : {},
+    });
+    return {
+      success: true,
+      message: null,
+      data: response.data,
+      responseCode: response.status,
+    };
+  } catch (e: any) {
+    return {
+      success: false,
+      message: JSON.stringify(e),
+      data: e?.response?.data || null,
+      responseCode: e?.response?.status || 400,
+    };
+  }
+};
+
 
 // type TJenisAPI = "apiBase";
 

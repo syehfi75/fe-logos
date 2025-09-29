@@ -4,10 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useMentorStore } from "@/store/mentor";
 import { usePostUmumToken } from "@/utils/useFetchUmum";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function CreateMateriPage() {
+  const router = useRouter();
   const [selectedId, setSelectedId] = useState<string>("");
   const [thumbnail, setThumbnail] = useState<File[]>([]);
   const [video, setVideo] = useState<File[]>([]);
@@ -48,13 +50,16 @@ export default function CreateMateriPage() {
     formData.append(`video`, video[0]);
     try {
       const result = await postMateri(formData);
-      console.log("result", result);
-      setForm({ title: "", description: "" });
-      setThumbnail([]);
-      setVideo([]);
-      toast.success(
-        "Materi " + filteredItemsById?.[0]?.title + " berhasil dibuat!. Tunggu sekitar 2 menit"
-      );
+      // console.log("result", result);
+      if (result?.status) {
+        await useMentorStore.getState().fetchMentorKursus();
+        toast.success(
+          "Materi " +
+            filteredItemsById?.[0]?.title +
+            " berhasil dibuat!. Tunggu sekitar 2 menit"
+        );
+        router.push("/mentor/materi");
+      }
     } catch (error) {
       console.error(error);
     }

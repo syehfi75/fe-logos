@@ -1,19 +1,48 @@
 "use client";
-import { lessonColumns } from "@/components/MentorPage/courses/column";
+import { getLessonColumns } from "@/components/MentorPage/courses/column";
 import { DataTable } from "@/components/MentorPage/table/data-table";
-import { Button } from "@/components/ui/button";
+import { deleteDataToken } from "@/lib/fetchUmumHelper";
 import { useMentorStore } from "@/store/mentor";
-import { useFetchTriggerToken, useFetchUmumToken } from "@/utils/useFetchUmum";
-import { Plus } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useFetchTriggerToken } from "@/utils/useFetchUmum";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 export default function MateriPage() {
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string>("");
   const [listCourse, loadingCourse, fetchData] = useFetchTriggerToken<any[]>(
     "apiBase",
     `/api/mentor/courses/${selectedId}/lessons`
   );
+  const lessons = listCourse?.[0]?.lessons ?? [];
+  const lessonsWithCourseId = useMemo(
+    () => lessons.map((ls: any) => ({ ...ls, course_id: selectedId })),
+    [lessons, selectedId]
+  );
+  const visibleRows = useMemo(() => {
+    if (deletedIds.size === 0) return lessonsWithCourseId;
+    return lessonsWithCourseId.filter(
+      (l: { id: any }) => !deletedIds.has(String(l.id))
+    );
+  }, [lessonsWithCourseId, deletedIds]);
+
+  const handleDeleteLesson = async (c: any) => {
+    try {
+      const res = await deleteDataToken(
+        "apiBase",
+        `/api/mentor/courses/${c.course_id}/lessons/${c.id}`
+      );
+      if (!res.success) throw new Error(res.message || "Gagal menghapus");
+      setDeletedIds((prev) => {
+        const n = new Set(prev);
+        n.add(String(c.id));
+        return n;
+      });
+      toast.success(`Berhasil dihapus "${c.title}" telah dihapus.`);
+    } catch (e: any) {
+      toast.error(`Gagal menghapus "${c.title}": ${e.message || e}`);
+    }
+  };
 
   const { mentorKursus, ensureMentorKursus } = useMentorStore();
   useEffect(() => {
@@ -25,6 +54,10 @@ export default function MateriPage() {
       fetchData();
     }
   }, [selectedId]);
+  const columns = useMemo(
+    () => getLessonColumns({ onDelete: handleDeleteLesson }),
+    [handleDeleteLesson]
+  );
 
   return (
     <>
@@ -47,8 +80,8 @@ export default function MateriPage() {
         </select>
       </div>
       {loadingCourse && <div>Loading...</div>}
-      {!loadingCourse &&listCourse && listCourse.length > 0 && (
-        <DataTable columns={lessonColumns} data={listCourse} />
+      {!loadingCourse && listCourse && listCourse.length > 0 && (
+        <DataTable columns={columns} data={visibleRows} />
       )}
     </>
   );

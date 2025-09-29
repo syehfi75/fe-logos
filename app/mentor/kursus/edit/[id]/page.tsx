@@ -2,17 +2,32 @@
 import Dropzone from "@/components/MentorPage/dropzone/Dropzone";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { usePostUmumToken } from "@/utils/useFetchUmum";
-import { useState } from "react";
+import { useFetchUmumToken, usePostUmumToken } from "@/utils/useFetchUmum";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function EditKursusPage() {
+  const { id } = useParams<{ id: string }>();
   const [files, setFiles] = useState<File[]>([]);
   const [selectedOption, setSelectedOption] = useState("1");
   const [form, setForm] = useState({
     title: "",
     description: "",
   });
-  const [postCourse] = usePostUmumToken("apiBase", "/api/mentor/courses");
+  const [listCourse, loadingCourse] = useFetchUmumToken(
+    "apiBase",
+    `/api/mentor/courses/${id}`
+  );
+
+  useEffect(() => {
+    if (listCourse) {
+      const lesson = listCourse;
+      setForm({ title: lesson?.title, description: lesson?.description });
+    }
+  }, [listCourse]);
+  console.log(listCourse);
+
+  const [postCourse] = usePostUmumToken("apiBase", `/api/mentor/courses/${id}`);
   const handleForm = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -44,7 +59,7 @@ export default function EditKursusPage() {
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold mb-4">Buat kursus baru</h1>
+        <h1 className="text-2xl font-bold mb-4">Edit kursus: </h1>
       </div>
       <div className="flex flex-col">
         <div className="mb-4">
@@ -93,7 +108,7 @@ export default function EditKursusPage() {
           className="bg-blue-500 text-white px-4 py-2 rounded w-32 cursor-pointer"
           onClick={handleSubmit}
         >
-          Buat Kursus
+          Edit Kursus
         </button>
       </div>
     </>

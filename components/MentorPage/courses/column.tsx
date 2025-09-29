@@ -3,8 +3,11 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Course, Lesson } from "@/types/mentorCourse";
+import { actionsColumn } from "./actionColumn";
+import { useMentorStore } from "@/store/mentor";
+import { toast } from "sonner";
+import { deleteDataToken } from "@/lib/fetchUmumHelper";
 
 const formatDate = (s: string) =>
   new Date(s.replace(" ", "T")).toLocaleDateString("id-ID", {
@@ -12,6 +15,15 @@ const formatDate = (s: string) =>
     month: "short",
     year: "numeric",
   });
+
+const handleDelete = async (c: any) => {
+  try {
+    await useMentorStore.getState().deleteCourse(c.id);
+    toast.success(`Berhasil dihapus "${c.title}" telah dihapus.`);
+  } catch (e: any) {
+    toast.error(`Gagal menghapus "${c.title}": ${e.message || e}`);
+  }
+};
 
 export const columns: ColumnDef<Course>[] = [
   {
@@ -39,9 +51,7 @@ export const columns: ColumnDef<Course>[] = [
   {
     header: "Title",
     accessorKey: "title",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.original.title}</div>
-    ),
+    cell: ({ row }) => <div className="font-medium">{row.original.title}</div>,
   },
   {
     header: "Status",
@@ -54,9 +64,7 @@ export const columns: ColumnDef<Course>[] = [
           : s === "draft"
           ? "bg-yellow-200 text-yellow-800"
           : "bg-gray-200 text-gray-800";
-      return (
-        <span className={`px-2 py-1 text-xs rounded ${cls}`}>{s}</span>
-      );
+      return <span className={`px-2 py-1 text-xs rounded ${cls}`}>{s}</span>;
     },
   },
   {
@@ -68,91 +76,85 @@ export const columns: ColumnDef<Course>[] = [
     accessorKey: "created_at",
     cell: ({ row }) => <span>{formatDate(row.original.created_at)}</span>,
   },
-  {
-    id: "actions",
-    header: () => <div className="text-right">Actions</div>,
-    cell: ({ row }) => (
-      <div className="text-right space-x-2">
-        <Button variant="secondary" size="sm">Edit</Button>
-        <Button variant="destructive" size="sm">Delete</Button>
-      </div>
-    ),
-    enableSorting: false,
-  },
+  actionsColumn<Course>({
+    align: "right",
+    editHref: (c) => `/mentor/kursus/edit/${c.id}`,
+    onDelete: async (c) => {
+      handleDelete(c);
+    },
+  }),
 ];
 
-export const lessonColumns: ColumnDef<Lesson>[] = [
-  {
-    header: "Thumb",
-    accessorKey: "thumbnail",
-    enableSorting: false,
-    size: 80,
-    cell: ({ row }) => {
-      const url = row.original.thumbnail;
-      return url ? (
-        // pakai <img> agar tidak perlu config next/image
-        <img
-          src={url}
-          alt={row.original.title}
-          width={72}
-          height={48}
-          className="rounded object-cover"
-        />
-      ) : (
-        <div className="w-[72px] h-[48px] rounded bg-gray-200 text-gray-700 text-[10px] flex items-center justify-center">
-          N/A
-        </div>
-      );
+export function getLessonColumns(opts: {
+  onDelete: (l: Lesson) => Promise<void>;
+}) {
+  const { onDelete } = opts;
+
+  const lessonColumns: ColumnDef<Lesson>[] = [
+    {
+      header: "Thumb",
+      accessorKey: "thumbnail",
+      enableSorting: false,
+      size: 80,
+      cell: ({ row }) => {
+        const url = row.original.thumbnail;
+        return url ? (
+          // pakai <img> agar tidak perlu config next/image
+          <img
+            src={url}
+            alt={row.original.title}
+            width={72}
+            height={48}
+            className="rounded object-cover"
+          />
+        ) : (
+          <div className="w-[72px] h-[48px] rounded bg-gray-200 text-gray-700 text-[10px] flex items-center justify-center">
+            N/A
+          </div>
+        );
+      },
     },
-  },
-  {
-    header: "Title",
-    accessorKey: "title",
-    cell: ({ row }) => (
-      <div>
-        <div className="font-medium">{row.original.title}</div>
-      </div>
-    ),
-  },
-  {
-    header: "Order",
-    accessorKey: "order",
-    size: 60,
-  },
-  {
-    header: "Duration",
-    accessorKey: "duration",
-    size: 80,
-    cell: ({ row }) => <span>{row.original.duration} m</span>,
-  },
-  {
-    header: "Video",
-    accessorKey: "video_url",
-    enableSorting: false,
-    cell: ({ row }) => (
-      <a
-        href={row.original.video_url}
-        target="_blank"
-        rel="noreferrer"
-        className="text-sm underline"
-      >
-        Open
-      </a>
-    ),
-  },
-  {
-    id: "actions",
-    header: () => <div className="text-right">Actions</div>,
-    enableSorting: false,
-    cell: ({ row }) => (
-      <div className="text-right space-x-2">
-        <Button size="sm" variant="secondary" onClick={() => alert(`Edit lesson ${row.original.id}`)}>
-          Edit
-        </Button>
-        <Button size="sm" variant="destructive" onClick={() => alert(`Delete lesson ${row.original.id}`)}>
-          Delete
-        </Button>
-      </div>
-    ),
-  },
-];
+    {
+      header: "Title",
+      accessorKey: "title",
+      cell: ({ row }) => (
+        <div>
+          <div className="font-medium">{row.original.title}</div>
+        </div>
+      ),
+    },
+    {
+      header: "Order",
+      accessorKey: "order",
+      size: 60,
+    },
+    {
+      header: "Duration",
+      accessorKey: "duration",
+      size: 80,
+      cell: ({ row }) => <span>{row.original.duration} m</span>,
+    },
+    {
+      header: "Video",
+      accessorKey: "video_url",
+      enableSorting: false,
+      cell: ({ row }) => (
+        <a
+          href={row.original.video_url}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm underline"
+        >
+          Open
+        </a>
+      ),
+    },
+    actionsColumn<Lesson>({
+      align: "right",
+      editHref: (c) => `/mentor/materi/edit/${c.course_id}?materi=${c.id}`,
+      onDelete: onDelete,
+    }),
+  ];
+
+  return lessonColumns;
+}

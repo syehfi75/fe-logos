@@ -1,10 +1,13 @@
 "use client";
 import { getLessonColumns } from "@/components/MentorPage/courses/column";
 import { DataTable } from "@/components/MentorPage/table/data-table";
+import Modal from "@/components/Modal/Modal";
+import VideoPlayer from "@/components/VideoPlayer/VideoPlayer";
 import { deleteDataToken } from "@/lib/fetchUmumHelper";
 import { useMentorStore } from "@/store/mentor";
+import { Lesson } from "@/types/mentorCourse";
 import { useFetchTriggerToken } from "@/utils/useFetchUmum";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 export default function MateriPage() {
@@ -54,9 +57,15 @@ export default function MateriPage() {
       fetchData();
     }
   }, [selectedId]);
+  const onOpenVideo = useCallback((l: Lesson) => {
+    setVideo({ url: l?.video_url, title: l?.title });
+  }, []);
   const columns = useMemo(
-    () => getLessonColumns({ onDelete: handleDeleteLesson }),
+    () => getLessonColumns({ onDelete: handleDeleteLesson, onOpenVideo }),
     [handleDeleteLesson]
+  );
+  const [video, setVideo] = useState<{ url: string; title: string } | null>(
+    null
   );
 
   return (
@@ -83,6 +92,22 @@ export default function MateriPage() {
       {!loadingCourse && listCourse && listCourse.length > 0 && (
         <DataTable columns={columns} data={visibleRows} />
       )}
+      <Modal
+        open={!!video}
+        onClose={() => setVideo(null)}
+        title={video?.title}
+        size="xl"
+      >
+        {video && (
+          <iframe
+            src={video?.url}
+            className="w-full h-96 rounded"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            loading="lazy"
+          />
+        )}
+      </Modal>
     </>
   );
 }

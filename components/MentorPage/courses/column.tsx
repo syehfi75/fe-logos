@@ -8,6 +8,7 @@ import { actionsColumn } from "./actionColumn";
 import { useMentorStore } from "@/store/mentor";
 import { toast } from "sonner";
 import { deleteDataToken } from "@/lib/fetchUmumHelper";
+import { Button } from "@/components/ui/button";
 
 const formatDate = (s: string) =>
   new Date(s.replace(" ", "T")).toLocaleDateString("id-ID", {
@@ -87,8 +88,9 @@ export const columns: ColumnDef<Course>[] = [
 
 export function getLessonColumns(opts: {
   onDelete: (l: Lesson) => Promise<void>;
+  onOpenVideo: (l: Lesson) => void; 
 }) {
-  const { onDelete } = opts;
+  const { onDelete, onOpenVideo } = opts;
 
   const lessonColumns: ColumnDef<Lesson>[] = [
     {
@@ -139,14 +141,9 @@ export function getLessonColumns(opts: {
       accessorKey: "video_url",
       enableSorting: false,
       cell: ({ row }) => (
-        <a
-          href={row.original.video_url}
-          target="_blank"
-          rel="noreferrer"
-          className="text-sm underline"
-        >
-          Open
-        </a>
+        <Button variant="outline" size="sm" onClick={() => onOpenVideo(row.original)}>
+          Preview
+        </Button>
       ),
     },
     actionsColumn<Lesson>({

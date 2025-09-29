@@ -4,11 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useMentorStore } from "@/store/mentor";
 import { useFetchUmumToken, usePostUmumToken } from "@/utils/useFetchUmum";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function EditMateriPage() {
+  const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const materi = searchParams.get("materi");
@@ -51,6 +52,7 @@ export default function EditMateriPage() {
         setThumbnail([]);
         setVideo([]);
         toast.success("Materi " + listCourse?.title + " berhasil di edit!");
+        router.push("/mentor/materi");
       }
     } catch (error) {
       console.error(error);

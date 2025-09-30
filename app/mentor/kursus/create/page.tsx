@@ -12,6 +12,7 @@ export default function CreateKursusPage() {
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [selectedOption, setSelectedOption] = useState("1");
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -32,6 +33,7 @@ export default function CreateKursusPage() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     let formData = new FormData();
     formData.append("title", form.title);
     formData.append("description", form.description);
@@ -41,11 +43,13 @@ export default function CreateKursusPage() {
       const result = await postCourse(formData);
       if (result?.status) {
         await useMentorStore.getState().fetchMentorKursus();
+        setLoading(false);
         toast.success("Kursus " + form.title + " berhasil dibuat!.");
         router.push("/mentor/kursus");
       }
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
   return (
@@ -103,10 +107,14 @@ export default function CreateKursusPage() {
           </div>
         </div>
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded w-32 cursor-pointer"
+          className={`bg-blue-500 text-white px-4 py-2 rounded w-max ${
+            loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600 cursor-pointer"
+          }`}
+          disabled={loading}
+          type="button"
           onClick={handleSubmit}
         >
-          Buat Kursus
+          {loading ? "Membuat..." : "Buat Kursus"}
         </button>
       </div>
     </>

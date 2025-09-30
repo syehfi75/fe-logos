@@ -12,6 +12,7 @@ export default function EditKursusPage() {
   const { id } = useParams<{ id: string }>();
   const [files, setFiles] = useState<File[]>([]);
   const [selectedOption, setSelectedOption] = useState("1");
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -46,6 +47,7 @@ export default function EditKursusPage() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     let formData = new FormData();
     formData.append("title", form.title);
     formData.append("description", form.description);
@@ -56,11 +58,13 @@ export default function EditKursusPage() {
       if (result?.status) {
         setForm({ title: "", description: "" });
         setFiles([]);
+        setLoading(false);
         toast.success("Kursus " + listCourse?.title + " berhasil di edit!");
         router.push("/mentor/kursus");
       }
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
   return (
@@ -114,10 +118,14 @@ export default function EditKursusPage() {
           </div>
         </div>
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded w-max cursor-pointer"
+          className={`bg-blue-500 text-white px-4 py-2 rounded w-max ${
+            loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600 cursor-pointer"
+          }`}
+          disabled={loading}
+          type="button"
           onClick={handleSubmit}
         >
-          Edit Kursus {listCourse?.title}
+          {loading ? "Menyimpan..." : "Simpan Perubahan"}
         </button>
       </div>
     </>

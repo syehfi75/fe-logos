@@ -13,6 +13,7 @@ export default function EditMateriPage() {
   const { id } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const materi = searchParams.get("materi");
+  const [loading, setLoading] = useState(false);
   const [selectedId, setSelectedId] = useState<string>("");
   const [thumbnail, setThumbnail] = useState<File[]>([]);
   const [video, setVideo] = useState<File[]>([]);
@@ -40,6 +41,7 @@ export default function EditMateriPage() {
   );
 
   const handleSubmit = async () => {
+    setLoading(true);
     let formData = new FormData();
     formData.append("title", form.title);
     formData.append("description", form.description);
@@ -48,6 +50,7 @@ export default function EditMateriPage() {
     try {
       const result = await postMateri(formData);
       if (result?.status) {
+        setLoading(false);
         setForm({ title: "", description: "" });
         setThumbnail([]);
         setVideo([]);
@@ -56,6 +59,7 @@ export default function EditMateriPage() {
       }
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
 
@@ -109,10 +113,14 @@ export default function EditMateriPage() {
           </div>
         </div>
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded w-max cursor-pointer"
+          className={`bg-blue-500 text-white px-4 py-2 rounded w-max ${
+            loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600 cursor-pointer"
+          }`}
+          disabled={loading}
+          type="button"
           onClick={handleSubmit}
         >
-          Edit materi {listCourse?.title}
+          {loading ? "Menyimpan..." : "Simpan Perubahan"}
         </button>
       </div>
     </>

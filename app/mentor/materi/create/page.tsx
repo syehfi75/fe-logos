@@ -13,6 +13,7 @@ export default function CreateMateriPage() {
   const [selectedId, setSelectedId] = useState<string>("");
   const [thumbnail, setThumbnail] = useState<File[]>([]);
   const [video, setVideo] = useState<File[]>([]);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -43,6 +44,7 @@ export default function CreateMateriPage() {
   );
 
   const handleSubmit = async () => {
+    setLoading(true);
     let formData = new FormData();
     formData.append("title", form.title);
     formData.append("description", form.description);
@@ -50,9 +52,11 @@ export default function CreateMateriPage() {
     formData.append(`video`, video[0]);
     try {
       const result = await postMateri(formData);
-      // console.log("result", result);
+      console.log(result);
+      
       if (result?.status) {
         await useMentorStore.getState().fetchMentorKursus();
+        setLoading(false);
         toast.success(
           "Materi " +
             filteredItemsById?.[0]?.title +
@@ -62,6 +66,7 @@ export default function CreateMateriPage() {
       }
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
 
@@ -135,10 +140,14 @@ export default function CreateMateriPage() {
               </div>
             </div>
             <button
-              className="bg-blue-500 text-white px-4 py-2 rounded w-max cursor-pointer"
+              className={`bg-blue-500 text-white px-4 py-2 rounded w-max ${
+                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600 cursor-pointer"
+              }`}
+              disabled={loading}
+              type="button"
               onClick={handleSubmit}
             >
-              Buat materi {filteredItemsById?.[0]?.title}
+              {loading ? "Menyimpan..." : "Simpan Materi Baru"}
             </button>
           </div>
         </>

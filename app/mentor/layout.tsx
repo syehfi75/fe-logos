@@ -62,7 +62,6 @@ export default function MentorLayout({
       {!hidden && (
         <Sidebar
           title="Mentor Admin"
-          headerHref="/mentor"
           topSections={topSections}
           groups={mentorMenu}
         />

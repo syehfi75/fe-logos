@@ -1,11 +1,15 @@
 "use client";
 import Dropzone from "@/components/MentorPage/dropzone/Dropzone";
+import Modal from "@/components/Modal/Modal";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useMentorStore } from "@/store/mentor";
+import { Lesson } from "@/types/mentorCourse";
 import { useFetchUmumToken, usePostUmumToken } from "@/utils/useFetchUmum";
+import { Play } from "lucide-react";
+import Image from "next/image";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function EditMateriPage() {
@@ -62,9 +66,32 @@ export default function EditMateriPage() {
       setLoading(false);
     }
   };
+  const [videoExist, setVideoExist] = useState<{
+    url: string;
+    title: string;
+  } | null>(null);
+  const onOpenVideo = useCallback((l: Lesson) => {
+    setVideoExist({ url: l?.video_url, title: l?.title });
+  }, []);
 
   return (
     <>
+      <Modal
+        open={!!videoExist}
+        onClose={() => setVideoExist(null)}
+        title={videoExist?.title}
+        size="xl"
+      >
+        {videoExist && (
+          <iframe
+            src={videoExist?.url}
+            className="w-full h-96 rounded"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            loading="lazy"
+          />
+        )}
+      </Modal>
       <div>
         <h1 className="text-2xl font-bold mb-4">
           Edit materi : {listCourse?.title}
@@ -92,6 +119,31 @@ export default function EditMateriPage() {
             value={form.description}
           />
         </div>
+        <label className="block mb-2">Thumbnail dan video</label>
+        {listCourse?.thumbnail && !thumbnail.length && (
+          <div className="my-2">
+            <div className="relative inline-block group">
+              <Image
+                src={listCourse.thumbnail}
+                alt="Thumbnail"
+                width={300}
+                height={300}
+                className="object-cover rounded block"
+              />
+              <div className="absolute inset-0 rounded bg-black/20 opacity-0 group-hover:opacity-100 transition" />
+              <button
+                type="button"
+                onClick={() => onOpenVideo(listCourse)}
+                aria-label="Play video"
+                className="absolute inset-0 grid place-items-center cursor-pointer"
+              >
+                <span className="rounded-full bg-white/85 group-hover:bg-white p-4 shadow-lg transition">
+                  <Play className="w-10 h-10 text-gray-900" />
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
         <div className="mb-4 flex gap-16">
           <div>
             <label>Thumbnail</label>
@@ -114,7 +166,9 @@ export default function EditMateriPage() {
         </div>
         <button
           className={`bg-blue-500 text-white px-4 py-2 rounded w-max ${
-            loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600 cursor-pointer"
+            loading
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-blue-600 cursor-pointer"
           }`}
           disabled={loading}
           type="button"

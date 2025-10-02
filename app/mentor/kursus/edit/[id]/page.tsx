@@ -3,6 +3,7 @@ import Dropzone from "@/components/MentorPage/dropzone/Dropzone";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useFetchUmumToken, usePostUmumToken } from "@/utils/useFetchUmum";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -70,7 +71,9 @@ export default function EditKursusPage() {
   return (
     <>
       <div>
-        <h1 className="text-2xl font-bold mb-4">Edit kursus: {listCourse?.title}</h1>
+        <h1 className="text-2xl font-bold mb-4">
+          Edit kursus: {listCourse?.title}
+        </h1>
       </div>
       <div className="flex flex-col">
         <div className="mb-4">
@@ -93,6 +96,18 @@ export default function EditKursusPage() {
             onChange={handleForm}
             value={form.description}
           />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="description">Thumbnail</label>
+          {listCourse?.thumbnail && !files[0] && (
+            <Image
+              src={listCourse.thumbnail.mid}
+              alt="Thumbnail"
+              width={300}
+              height={300}
+              className="object-cover rounded block"
+            />
+          )}
         </div>
         <div className="mb-4 flex gap-16">
           <div>
@@ -119,7 +134,9 @@ export default function EditKursusPage() {
         </div>
         <button
           className={`bg-blue-500 text-white px-4 py-2 rounded w-max ${
-            loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600 cursor-pointer"
+            loading
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-blue-600 cursor-pointer"
           }`}
           disabled={loading}
           type="button"

@@ -7,7 +7,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export interface IResponsePost<T> {
   status: boolean;
   message: null | string;
-  /** data atau error */
   data: T;
   postedData: any;
   responseCode: number;

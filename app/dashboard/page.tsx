@@ -32,18 +32,17 @@ export default function Dashboard() {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-20">
-        <h1 className="font-bold text-5xl py-6">Hi, {user?.username}</h1>
+      <div className="container mx-auto px-4 sm:px-8 md:px-20">
+        <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl py-6">Hi, {user?.username}</h1>
       </div>
-      <div className="bg-gray-300/20 py-12">
-        <div className="container mx-auto px-20">
-          <p className="font-bold text-3xl">Continue Learning</p>
+      <div className="bg-gray-300/20 py-8 sm:py-10 md:py-12">
+        <div className="container mx-auto px-4 sm:px-8 md:px-20">
+          <p className="font-bold text-2xl sm:text-3xl">Continue Learning</p>
           {loading ? (
-            // <p className="text-gray-500">Loading courses...</p>
-            <div className="flex gap-4">
-              <Skeleton height={250} width={250} />
-              <Skeleton height={250} width={250} />
-              <Skeleton height={250} width={250} />
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
+              <div className="w-full"><Skeleton height={200} width={'100%'} /></div>
+              <div className="w-full"><Skeleton height={200} width={'100%'} /></div>
+              <div className="hidden sm:block w-full"><Skeleton height={200} width={'100%'} /></div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
@@ -54,17 +53,17 @@ export default function Dashboard() {
                     onClick={() => router.push(`/preview/${course.slug}`)}
                   >
                     <Image
-                      className="w-24 h-24 object-cover rounded-lg"
+                      className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg"
                       src={course.thumbnail}
                       alt={course.description}
                       width={100}
                       height={200}
                     />
                     <div className="flex flex-col truncate">
-                      <h2 className="text-xl font-semibold truncate">
+                      <h2 className="text-lg sm:text-xl font-semibold truncate">
                         {course.title}
                       </h2>
-                      <p className="text-gray-500 text-sm">
+                      <p className="text-gray-500 text-xs sm:text-sm">
                         {course.completed_lessons} of {course.total_lessons}{" "}
                         lessons completed
                       </p>
@@ -86,9 +85,9 @@ export default function Dashboard() {
                       <div key={data.id}>
                         {!data.is_completed && data.last_position > 0 && (
                           <>
-                            <div className="aspect-w-16 aspect-h-">
+                            <div>
                               <Image
-                                className="w-full h-[160px] object-cover rounded-t-lg"
+                                className="w-full h-[140px] sm:h-[160px] object-cover rounded-t-lg"
                                 src={data.thumbnail}
                                 alt={data.description}
                                 width={400}
@@ -96,7 +95,7 @@ export default function Dashboard() {
                               />
                             </div>
                             <div className="p-4 bg-white">
-                              <h1 className="text-gray-500 text-lg">
+                              <h1 className="text-gray-500 text-base sm:text-lg">
                                 {data.title}
                               </h1>
                             </div>

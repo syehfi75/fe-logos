@@ -1,7 +1,7 @@
 "use client";
 
-import { usePostUmum, usePutUmum } from "@/utils/useFetchUmum";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { usePutUmum } from "@/utils/useFetchUmum";
+import { useCallback, useRef } from "react";
 import ReactPlayer from "react-player";
 
 interface ReactVideoPlayerProps {
@@ -14,9 +14,9 @@ interface ReactVideoPlayerProps {
   width?: string;
   height?: string;
   trackProgress?: boolean;
-  className?: string;
   last_duration?: number;
   duration?: number;
+  playsInline?: boolean;
 }
 
 export default function VideoPlayer({
@@ -29,7 +29,7 @@ export default function VideoPlayer({
   width = "100%",
   height = "100%",
   trackProgress = false,
-  className,
+  playsInline,
   last_duration = 0,
   duration = 0,
 }: ReactVideoPlayerProps) {
@@ -81,6 +81,7 @@ export default function VideoPlayer({
       onEnded={handleEnded}
       // className="absolute inset-0"
       onReady={() => onReady()}
+      playsInline={playsInline}
     />
   );
 }

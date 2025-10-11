@@ -5,11 +5,13 @@ export const metadata: Metadata = {
   title: "Lesson",
 };
 
-export default async function WatchLessonPage({
+export default function WatchLessonPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string | string[] };
 }) {
-  const {slug} = await params
-  return <WatchLesson slug={slug} />;
+  const slugParam = Array.isArray(params.slug)
+    ? params.slug.join("/")
+    : params.slug;
+  return <WatchLesson slug={slugParam} />;
 }

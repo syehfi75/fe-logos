@@ -50,7 +50,7 @@ export default function PreviewLesson({ slug }: Props) {
 
   return (
     <>
-      <div className="container mx-auto px-40">
+      <div className="container mx-auto px-4 sm:px-8 md:px-20">
         <nav className={`sticky top-0 z-10`}>
           <div
             className={`absolute left-0 top-0 flex items-center gap-2 mb-4 py-5 text-white w-full px-4 ${
@@ -66,32 +66,36 @@ export default function PreviewLesson({ slug }: Props) {
             </h1>
           </div>
         </nav>
-        <div className="w-full">
-          <VideoPlayer
-            url="https://www.w3schools.com/html/mov_bbb.mp4"
-            playing
-            muted
-            className="rounded-b-2xl"
-          />
+        <div className="w-full rounded-b-2xl overflow-hidden">
+          <div className="w-full aspect-video">
+            <VideoPlayer
+              url="https://www.w3schools.com/html/mov_bbb.mp4"
+              playing
+              playsInline
+              muted
+              width="100%"
+              height="100%"
+            />
+          </div>
         </div>
-        <div className="flex mt-4 gap-6">
+        <div className="flex flex-col md:flex-row mt-4 gap-4 md:gap-6">
           {courseDetail?.thumbnail && (
             <Image
               src={courseDetail?.thumbnail}
               alt={courseDetail?.description || ""}
               width={200}
               height={200}
-              className="rounded-lg"
+              className="rounded-lg w-24 h-24 sm:w-32 sm:h-32 md:w-[200px] md:h-[200px] object-cover"
             />
           )}
           <div className="flex flex-col w-full">
-            <h1 className="font-bold text-2xl text-white">
+            <h1 className="font-bold text-xl sm:text-2xl text-white">
               {courseDetail?.title}
             </h1>
-            <p className="text-gray-400/70 font-bold">
+            <p className="text-gray-400/70 font-bold text-sm sm:text-base">
               {courseDetail?.instructor.name}
             </p>
-            <div className="flex gap-6 items-center mt-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-start sm:items-center mt-4">
               <div className="w-full bg-gray-200 rounded-full h-1 mt-1.5">
                 <div
                   className="bg-blue-600 h-1 rounded-full"
@@ -100,7 +104,7 @@ export default function PreviewLesson({ slug }: Props) {
                   }}
                 ></div>
               </div>
-              <p className="text-white text-md w-1/4">
+              <p className="text-white text-sm sm:text-base w-auto sm:w-1/3">
                 {courseDetail?.completed_lessons} of{" "}
                 {courseDetail?.total_lessons} lessons completed
               </p>
@@ -108,7 +112,7 @@ export default function PreviewLesson({ slug }: Props) {
           </div>
         </div>
         {/* Tabs */}
-        <div className="flex gap-6 text-white text-2xl mt-8 border-b border-gray-700">
+        <div className="flex gap-3 sm:gap-6 text-white text-lg sm:text-2xl mt-6 sm:mt-8 border-b border-gray-700">
           {tabs.map((tab) => (
             <button
               key={tab}
@@ -121,7 +125,7 @@ export default function PreviewLesson({ slug }: Props) {
             >
               {tab}
               {activeTab === tab && (
-                <span className="absolute left-0 -bottom-[1px] w-full h-[3px] bg-purple-400 rounded transition-all duration-300"></span>
+                <span className="absolute left-0 -bottom-[1px] w-full h-[2px] sm:h-[3px] bg-purple-400 rounded transition-all duration-300"></span>
               )}
             </button>
           ))}
@@ -137,24 +141,24 @@ export default function PreviewLesson({ slug }: Props) {
                   className="p-4 border-b border-gray-700 hover:bg-gray-800 cursor-pointer transition-all ease-in-out duration-500"
                   onClick={() => router.push(`/lesson/${slug}`)}
                 >
-                  <div className="flex items-center">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                     <Image
                       src={lesson.thumbnail}
                       alt={lesson.title}
                       width={200}
                       height={200}
-                      className="rounded-lg mr-4"
+                      className="rounded-lg mr-0 sm:mr-4 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 object-cover"
                     />
                     <div className="flex flex-col">
-                      <h2 className="text-lg font-semibold">{lesson.title}</h2>
+                      <h2 className="text-base sm:text-lg font-semibold">{lesson.title}</h2>
                       <p className="text-sm text-gray-400">
                         {lesson.description}
                       </p>
-                      <p className="text-sm text-gray-500 mt-2">
+                      <p className="text-xs sm:text-sm text-gray-500 mt-2">
                         {Math.floor(lesson.duration / 60)} minutes
                       </p>
                     </div>
-                    <div className="ml-auto flex items-center gap-2">
+                    <div className="sm:ml-auto flex items-center gap-2">
                       <ChevronRight />
                     </div>
                   </div>

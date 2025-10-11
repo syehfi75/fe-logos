@@ -63,30 +63,34 @@ export default function WatchLesson({ slug }: Props) {
   if (!courseDetail) return <p>Course not found</p>;
 
   return (
-    <div className="flex h-screen">
+    <div className="flex flex-col md:flex-row h-screen">
       {/* Video and details */}
-      <div className="flex-1 py-4 px-8 overflow-y-auto">
-        <div className="flex items-center justify-between mb-4">
-          <Link href="/dashboard" className="flex mb-4">
+      <div className="flex-1 py-4 px-4 sm:px-6 md:px-8 overflow-y-auto">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
+          <Link href="/dashboard" className="flex mb-2 sm:mb-0">
             <ArrowLeft className="inline mr-2" />
             Back to Dashboard
           </Link>
-          <h1 className="font-bold text-2xl mb-4">{courseDetail.title}</h1>
+          <h1 className="font-bold text-xl sm:text-2xl mb-0">{courseDetail.title}</h1>
         </div>
         {selectedLesson?.video_url && (
           <>
-            <VideoPlayer
-              url={selectedLesson.video_url}
-              trackProgress
-              videoId={selectedLesson.id.toString()}
-              className="rounded-xl aspect-video"
-              last_duration={
-                selectedLesson.last_position === selectedLesson.duration
-                  ? 0
-                  : selectedLesson.last_position
-              }
-              duration={selectedLesson.duration}
-            />
+            <div className="rounded-xl overflow-hidden aspect-video w-full">
+              <VideoPlayer
+                url={selectedLesson.video_url}
+                trackProgress
+                videoId={selectedLesson.id.toString()}
+                width="100%"
+                height="100%"
+                playsInline
+                last_duration={
+                  selectedLesson.last_position === selectedLesson.duration
+                    ? 0
+                    : selectedLesson.last_position
+                }
+                duration={selectedLesson.duration}
+              />
+            </div>
             <div className="mt-3 flex gap-2 justify-end">
               <button
                 onClick={goPrev}
@@ -108,11 +112,11 @@ export default function WatchLesson({ slug }: Props) {
           </>
         )}
 
-        <h1 className="text-xl font-bold mb-2 mt-4">{selectedLesson?.title}</h1>
-        <p className="text-gray-600">{selectedLesson?.description}</p>
+        <h1 className="text-lg sm:text-xl font-bold mb-2 mt-4">{selectedLesson?.title}</h1>
+        <p className="text-sm sm:text-base text-gray-600">{selectedLesson?.description}</p>
 
         <div className="flex items-center gap-3 mt-4">
-          <div className="rounded-full h-14 w-14 bg-black overflow-hidden">
+          <div className="rounded-full h-12 w-12 sm:h-14 sm:w-14 bg-black overflow-hidden">
             <Image
               src={courseDetail.instructor.avatar}
               alt={courseDetail.instructor.name}
@@ -122,8 +126,8 @@ export default function WatchLesson({ slug }: Props) {
             />
           </div>
           <div className="flex flex-col">
-            <p className="font-medium">{courseDetail.instructor.name}</p>
-            <p className="text-sm text-gray-600">
+            <p className="font-medium text-sm sm:text-base">{courseDetail.instructor.name}</p>
+            <p className="text-xs sm:text-sm text-gray-600">
               {courseDetail.instructor.bio}
             </p>
           </div>
@@ -131,10 +135,10 @@ export default function WatchLesson({ slug }: Props) {
       </div>
 
       {/* Lessons list */}
-      <div className="w-3/12 p-4 border-l border-gray-300 overflow-y-auto">
-        <div className="flex gap-4 items-center mb-4">
+      <div className="w-full md:w-4/12 p-4 md:border-l border-gray-300 overflow-y-auto">
+        <div className="flex gap-4 items-center mb-4 justify-center md:justify-start">
           <h1
-            className={`text-xl font-bold cursor-pointer px-6 py-1 rounded-full ${
+            className={`text-base sm:text-lg md:text-xl font-bold cursor-pointer px-4 sm:px-6 py-1 rounded-full ${
               tabs.video ? "text-blue-600" : "hover:bg-gray-400/50"
             }`}
             onClick={() => setTabs({ video: true, resources: false })}
@@ -142,7 +146,7 @@ export default function WatchLesson({ slug }: Props) {
             Lessons
           </h1>
           <h1
-            className={`text-xl font-bold cursor-pointer px-6 py-1 rounded-full ${
+            className={`text-base sm:text-lg md:text-xl font-bold cursor-pointer px-4 sm:px-6 py-1 rounded-full ${
               tabs.resources ? "text-blue-600 " : "hover:bg-gray-400/50"
             }`}
             onClick={() => setTabs({ video: false, resources: true })}
@@ -152,7 +156,7 @@ export default function WatchLesson({ slug }: Props) {
         </div>
         {tabs.video && (
           <>
-            <div className="text-sm text-gray-500 mb-3">
+            <div className="text-xs sm:text-sm text-gray-500 mb-3 text-center md:text-left">
               {courseDetail.completed_lessons} of {courseDetail.total_lessons}{" "}
               completed
             </div>
@@ -174,7 +178,7 @@ export default function WatchLesson({ slug }: Props) {
                         alt={lesson.title}
                         width={80}
                         height={45}
-                        className="w-20 h-[45px] object-cover rounded-md"
+                        className="w-16 h-[40px] sm:w-20 sm:h-[45px] object-cover rounded-md"
                       />
                       {lesson.is_completed && (
                         <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
@@ -196,7 +200,7 @@ export default function WatchLesson({ slug }: Props) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p
-                        className={`font-medium truncate ${
+                        className={`font-medium truncate text-sm sm:text-base ${
                           selectedLesson?.slug === lesson.slug
                             ? "text-blue-600"
                             : "text-gray-800"
@@ -204,7 +208,7 @@ export default function WatchLesson({ slug }: Props) {
                       >
                         {lesson.title}
                       </p>
-                      <div className="flex items-center text-xs text-gray-500 mt-1">
+                      <div className="flex items-center text-[10px] sm:text-xs text-gray-500 mt-1">
                         <span>
                           {Math.floor(lesson.duration / 60)}m{" "}
                           {lesson.duration % 60}s

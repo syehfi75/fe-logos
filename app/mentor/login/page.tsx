@@ -22,12 +22,11 @@ export default function LoginAdminPage() {
     try {
       await login(loginForm.email, loginForm.password);
       setLoading(false);
+      router.replace("/mentor/dashboard");
     } catch (error) {
       console.error(error);
-      
       setLoading(false);
     }
-    router.push("/mentor/dashboard");
   };
   return (
     <div>

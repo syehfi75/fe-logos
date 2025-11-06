@@ -21,10 +21,8 @@ export default function CreateMateriPage() {
   const handleForm = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const [postMateri] = usePostUmumToken(
-    "apiBase",
-    `/api/mentor/courses/${selectedId}/lessons`
-  );
+  const [postMateri, loadingUpload, cancelToken, progressUpload] =
+    usePostUmumToken("apiBase", `/api/mentor/courses/${selectedId}/lessons`);
 
   const { mentorKursus, ensureMentorKursus } = useMentorStore();
   useEffect(() => {
@@ -52,8 +50,8 @@ export default function CreateMateriPage() {
     formData.append(`video`, video[0]);
     try {
       const result = await postMateri(formData);
-      console.log(result);
-      
+      // console.log(result);
+
       if (result?.status) {
         await useMentorStore.getState().fetchMentorKursus();
         setLoading(false);
@@ -141,7 +139,9 @@ export default function CreateMateriPage() {
             </div>
             <button
               className={`bg-blue-500 text-white px-4 py-2 rounded w-max ${
-                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-600 cursor-pointer"
+                loading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-blue-600 cursor-pointer"
               }`}
               disabled={loading}
               type="button"
@@ -149,6 +149,17 @@ export default function CreateMateriPage() {
             >
               {loading ? "Menyimpan..." : "Simpan Materi Baru"}
             </button>
+            {loadingUpload && (
+              <div className="mt-4 w-3/12">
+                <div className="w-full bg-gray-200 h-2 rounded-full">
+                  <div
+                    className="bg-blue-500 h-2 rounded-full transition-all duration-200"
+                    style={{ width: `${progressUpload}%` }}
+                  />
+                </div>
+                <p className="text-sm mt-1 text-center">{progressUpload}%</p>
+              </div>
+            )}
           </div>
         </>
       )}

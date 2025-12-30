@@ -19,7 +19,8 @@ type THasilTriggerFetch<T> = [T | null, boolean, () => Promise<void>];
 type THasilPost<T> = [
   (data: any) => Promise<IResponsePost<T> | null>,
   boolean,
-  CancelTokenSource
+  CancelTokenSource,
+  number?
 ];
 type TJenisAPI = "apiBase";
 
@@ -175,7 +176,8 @@ export function usePostUmumToken<T = any>(
   denganToken = true
 ): THasilPost<T> {
   const token = useAuthStore.getState().accessToken;
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const cancelTokenSebelumnya = useRef<CancelTokenSource | null>(null);
   const cancelToken = useRef(axios.CancelToken.source());
@@ -204,7 +206,8 @@ export function usePostUmumToken<T = any>(
         link,
         denganToken,
         token,
-        cancelToken.current
+        cancelToken.current,
+        (percent) => setProgress(percent)
       );
       linkSebelumnya.current = link;
       setLoading(false);
@@ -213,7 +216,7 @@ export function usePostUmumToken<T = any>(
     [jenisApi, link, token]
   );
 
-  return [post, loading, cancelToken.current];
+  return [post, loading, cancelToken.current, progress];
 }
 
 export function usePutUmum<T = any>(

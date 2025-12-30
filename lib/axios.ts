@@ -39,9 +39,9 @@ axiosInstance.interceptors.response.use(
       } catch (err) {
         Cookies.remove("access_token");
         Cookies.remove("refresh_token");
-        if (typeof window !== "undefined") {
-          window.location.href = "/login";
-        }
+        // if (typeof window !== "undefined") {
+        //   window.location.href = "/login";
+        // }
         return Promise.reject(err);
       }
     }
@@ -163,7 +163,8 @@ export const postUmumToken = async (
   link: string | null,
   denganToken = true,
   token: any,
-  reqCancelToken: any
+  reqCancelToken: any,
+  onProgress?: (percent: number) => void 
 ) => {
   try {
     const response = await axiosInstance.post(`${apiTerpilih}${link}`, postedData, {
@@ -175,6 +176,12 @@ export const postUmumToken = async (
           }
           : {},
       cancelToken: reqCancelToken.token,
+      onUploadProgress: (event) => {
+        if (event.total && onProgress) {
+          const percent = Math.round((event.loaded * 100) / event.total);
+          onProgress(percent);
+        }
+      },
     });
     return {
       success: true,

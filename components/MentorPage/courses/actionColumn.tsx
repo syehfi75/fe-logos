@@ -84,7 +84,7 @@ export function actionsColumn<T>(opts: ActionsOpts<T> = {}): ColumnDef<T> {
                 <AlertDialogAction
                   onClick={confirm}
                   disabled={loading}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90 cursor-pointer"
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90 cursor-pointer text-white"
                 >
                   {loading ? "Menghapus..." : "Hapus"}
                 </AlertDialogAction>

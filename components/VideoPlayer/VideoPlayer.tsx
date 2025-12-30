@@ -39,7 +39,7 @@ export default function VideoPlayer({
   const STORAGE_KEY = `video-progress-${videoId}`;
   const [postProgress] = usePutUmum(
     "apiBase",
-    `/dummy-api/lessons/${videoId}/progress`
+    `/api/user/lessons/${videoId}/progress`
   );
 
   const handleProgress = async () => {

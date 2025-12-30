@@ -136,6 +136,7 @@ export default function CreateMateriPage() {
                   multiple={false}
                   accept="video/*"
                   onChange={setVideo}
+                  disabled
                 />
               </div>
             </div>

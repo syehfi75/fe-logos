@@ -75,7 +75,7 @@ export default function PreviewLesson({ slug }: Props) {
           />
         </div>
         <div className="flex mt-4 gap-6">
-          {courseDetail?.thumbnail && (
+          {/* {courseDetail?.thumbnail && (
             <Image
               src={courseDetail?.thumbnail}
               alt={courseDetail?.description || ""}
@@ -83,7 +83,7 @@ export default function PreviewLesson({ slug }: Props) {
               height={200}
               className="rounded-lg"
             />
-          )}
+          )} */}
           <div className="flex flex-col w-full">
             <h1 className="font-bold text-2xl text-white">
               {courseDetail?.title}

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 type DropzoneProps = {
   name?: string;          
   multiple?: boolean;
+  disabled?: boolean;
   accept?: string;        
   maxSizeMB?: number;     
   onChange?: (files: File[]) => void;
@@ -14,6 +15,7 @@ type DropzoneProps = {
 export default function Dropzone({
   name = "files",
   multiple = true,
+  disabled = false,
   accept = "image/*,application/pdf,video/*",
   maxSizeMB = 10,
   onChange,
@@ -23,7 +25,6 @@ export default function Dropzone({
   const inputRef = useRef<HTMLInputElement>(null);
   
 
-  // revoke object URLs when unmount
   useEffect(() => {
     return () => {
       files.forEach((f: any) => f.preview && URL.revokeObjectURL(f.preview));
@@ -64,7 +65,6 @@ export default function Dropzone({
 
   return (
     <div className="space-y-3">
-      {/* Hidden input */}
       <input
         ref={inputRef}
         type="file"
@@ -73,9 +73,9 @@ export default function Dropzone({
         accept={accept}
         className="hidden"
         onChange={(e) => e.target.files && addFiles(e.target.files)}
+        disabled={disabled}
       />
 
-      {/* Drop area */}
       <div
         onDragOver={(e) => {
           e.preventDefault();
@@ -86,7 +86,7 @@ export default function Dropzone({
         onClick={openPicker}
         role="button"
         aria-label="Upload files"
-        className={`rounded-lg border-2 border-dashed p-6 text-center cursor-pointer transition
+        className={`rounded-lg border-2 border-dashed p-6 text-center ${disabled ? "opacity-50 pointer-events-none" : ""} transition
           ${isOver ? "border-primary bg-primary/5" : "border-muted-foreground/25"}
         `}
       >
@@ -99,12 +99,10 @@ export default function Dropzone({
         </p>
       </div>
 
-      {/* Preview list */}
       {files.length > 0 && (
         <div className="rounded-md border divide-y">
           {files.map((f, i) => (
             <div key={i} className="flex items-center gap-3 p-3">
-              {/* preview kecil utk image/video, selain itu tampil ikon generic */}
               {f.type.startsWith("image/") ? (
                 // @ts-ignore
                 <img src={f.preview} alt={f.name} className="w-12 h-12 rounded object-cover" />

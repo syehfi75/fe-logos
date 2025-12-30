@@ -64,7 +64,6 @@ export default function WatchLesson({ slug }: Props) {
 
   return (
     <div className="flex h-screen">
-      {/* Video and details */}
       <div className="flex-1 py-4 px-8 overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <Link href="/dashboard" className="flex mb-4">
@@ -75,7 +74,8 @@ export default function WatchLesson({ slug }: Props) {
         </div>
         {selectedLesson?.video_url && (
           <>
-            <VideoPlayer
+          <iframe className="w-full h-full" src={selectedLesson.video_url} ></iframe>
+            {/* <VideoPlayer
               url={selectedLesson.video_url}
               trackProgress
               videoId={selectedLesson.id.toString()}
@@ -86,7 +86,7 @@ export default function WatchLesson({ slug }: Props) {
                   : selectedLesson.last_position
               }
               duration={selectedLesson.duration}
-            />
+            /> */}
             <div className="mt-3 flex gap-2 justify-end">
               <button
                 onClick={goPrev}

@@ -74,6 +74,7 @@ export default function WatchLesson({ slug }: Props) {
         </div>
         {selectedLesson?.video_url && (
           <>
+          {/* TODO: Sementara pakai iframe, re-enable ketika sudah ada hls */}
           <iframe className="w-full h-full" src={selectedLesson.video_url} ></iframe>
             {/* <VideoPlayer
               url={selectedLesson.video_url}

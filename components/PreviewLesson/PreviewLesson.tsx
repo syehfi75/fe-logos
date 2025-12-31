@@ -66,16 +66,18 @@ export default function PreviewLesson({ slug }: Props) {
             </h1>
           </div>
         </nav>
-        <div className="w-full">
+        {/* TODO: Sementara disable untuk video preview, untuk h-20 dihilangkan ketika sudah ada video preview */}
+        <div className="h-20"></div>
+        {/* <div className="w-full">
           <VideoPlayer
             url="https://www.w3schools.com/html/mov_bbb.mp4"
             playing
             muted
             className="rounded-b-2xl"
           />
-        </div>
+        </div> */}
         <div className="flex mt-4 gap-6">
-          {/* {courseDetail?.thumbnail && (
+          {courseDetail?.thumbnail && (
             <Image
               src={courseDetail?.thumbnail}
               alt={courseDetail?.description || ""}
@@ -83,7 +85,7 @@ export default function PreviewLesson({ slug }: Props) {
               height={200}
               className="rounded-lg"
             />
-          )} */}
+          )}
           <div className="flex flex-col w-full">
             <h1 className="font-bold text-2xl text-white">
               {courseDetail?.title}

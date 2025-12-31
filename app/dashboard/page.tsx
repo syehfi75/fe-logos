@@ -54,13 +54,13 @@ export default function Dashboard() {
                     className="flex gap-2 p-4 cursor-pointer"
                     onClick={() => router.push(`/preview/${course.slug}`)}
                   >
-                    {/* <Image
+                    <Image
                       className="w-24 h-24 object-cover rounded-lg"
                       src={course.thumbnail}
                       alt={course.description}
                       width={100}
                       height={200}
-                    /> */}
+                    />
                     <div className="flex flex-col truncate">
                       <h2 className="text-xl font-semibold truncate">
                         {course.title}

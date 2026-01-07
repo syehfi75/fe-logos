@@ -75,19 +75,19 @@ export default function WatchLesson({ slug }: Props) {
         {selectedLesson?.video_url && (
           <>
           {/* TODO: Sementara pakai iframe, re-enable ketika sudah ada hls */}
-          <iframe className="w-full h-full" src={selectedLesson.video_url} ></iframe>
-            {/* <VideoPlayer
+          {/* <iframe className="w-full h-full" src={selectedLesson.video_url} ></iframe> */}
+            <VideoPlayer
               url={selectedLesson.video_url}
               trackProgress
               videoId={selectedLesson.id.toString()}
-              className="rounded-xl aspect-video"
+              // className="rounded-xl aspect-video"
               last_duration={
                 selectedLesson.last_position === selectedLesson.duration
                   ? 0
                   : selectedLesson.last_position
               }
               duration={selectedLesson.duration}
-            /> */}
+            />
             <div className="mt-3 flex gap-2 justify-end">
               <button
                 onClick={goPrev}

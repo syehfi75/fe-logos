@@ -1,20 +1,13 @@
 "use client";
 
-import { usePostUmum, usePutUmum } from "@/utils/useFetchUmum";
-import { useCallback, useEffect, useRef, useState } from "react";
-import ReactPlayer from "react-player";
+import { useEffect, useRef } from "react";
+import playerjs from "player.js";
+import { usePostUmumToken, usePutUmum } from "@/utils/useFetchUmum";
 
 interface ReactVideoPlayerProps {
   videoId?: string;
-  url: string | undefined;
-  controls?: boolean;
-  playing?: boolean;
-  loop?: boolean;
-  muted?: boolean;
-  width?: string;
-  height?: string;
+  url?: string;
   trackProgress?: boolean;
-  className?: string;
   last_duration?: number;
   duration?: number;
 }
@@ -22,65 +15,82 @@ interface ReactVideoPlayerProps {
 export default function VideoPlayer({
   videoId,
   url,
-  controls = true,
-  playing = false,
-  loop = false,
-  muted = false,
-  width = "100%",
-  height = "100%",
   trackProgress = false,
-  className,
   last_duration = 0,
   duration = 0,
 }: ReactVideoPlayerProps) {
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const playerRef = useRef<any>(null);
   const lastSavedRef = useRef<number>(0);
 
-  const STORAGE_KEY = `video-progress-${videoId}`;
-  const [postProgress] = usePutUmum(
+  const [postProgress] = usePostUmumToken(
     "apiBase",
     `/api/user/lessons/${videoId}/progress`
   );
 
-  const handleProgress = async () => {
-    if (trackProgress) {
-      const now = Date.now();
-      const body = {
-        last_position: Math.round(playerRef.current.currentTime),
-        video_duration: duration,
-      };
-      if (now - lastSavedRef.current > 30000) {
-        const result = await postProgress(body);
-        if (result?.status) {
-          console.log("Progress saved successfully", result?.data);
-        }
-        lastSavedRef.current = now;
+  useEffect(() => {
+    if (!iframeRef.current) return;
+
+    const player = new playerjs.Player(iframeRef.current);
+    playerRef.current = player;
+
+    /* ========= onReady ========= */
+    player.on("ready", () => {
+      console.log("PLAYER READY");
+
+      if (last_duration > 0) {
+        player.setCurrentTime(last_duration);
       }
-    }
-  };
+    });
 
-  const onReady = useCallback(() => {
-    playerRef.current.currentTime = last_duration;
-  }, [last_duration]);
+    /* ========= handleProgress ========= */
+    player.on("timeupdate", async ({ seconds, duration: videoDuration }: any) => {
+      if (!trackProgress) return;
 
-  const handleEnded = () => {
-    localStorage.removeItem(STORAGE_KEY);
-  };
+      const now = Date.now();
+
+      if (now - lastSavedRef.current < 30000) return;
+
+      const body = {
+        last_position: Math.round(seconds),
+        video_duration: Math.round(videoDuration ?? duration),
+        watched_duration: Math.round(seconds),
+      };
+
+      const result = await postProgress(body);
+      if (result?.status) {
+        console.log("Progress saved", body);
+      }
+
+      lastSavedRef.current = now;
+    });
+
+    /* ========= handleEnded ========= */
+    player.on("ended", async () => {
+      console.log("VIDEO ENDED");
+
+      await postProgress({
+        last_position: duration,
+        video_duration: duration,
+        watched_duration: duration,
+      });
+
+      localStorage.removeItem(`video-progress-${videoId}`);
+    });
+
+    return () => {
+      player.off("ready");
+      player.off("timeupdate");
+      player.off("ended");
+    };
+  }, [videoId, last_duration, duration, trackProgress]);
 
   return (
-    <ReactPlayer
-      ref={playerRef}
-      src={url}
-      controls={controls}
-      playing={playing}
-      loop={loop}
-      muted={muted}
-      width={width}
-      height={height}
-      onTimeUpdate={handleProgress}
-      onEnded={handleEnded}
-      // className="absolute inset-0"
-      onReady={() => onReady()}
+    <iframe
+      ref={iframeRef}
+      className="w-full h-full"
+      src={`${url}?playerjs=1`}
+      allow="autoplay; fullscreen"
     />
   );
 }

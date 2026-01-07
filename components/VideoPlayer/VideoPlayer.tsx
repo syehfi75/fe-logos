@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import playerjs from "player.js";
+import Player from "player.js";
 import { usePostUmumToken, usePutUmum } from "@/utils/useFetchUmum";
 
 interface ReactVideoPlayerProps {
@@ -31,7 +31,7 @@ export default function VideoPlayer({
   useEffect(() => {
     if (!iframeRef.current) return;
 
-    const player = new playerjs.Player(iframeRef.current);
+    const player = new Player(iframeRef.current!);
     playerRef.current = player;
 
     /* ========= onReady ========= */

@@ -28,8 +28,6 @@ export default function HeroHomePage() {
             <div className="w-full h-[600px] mt-9 rounded-xl"> 
               <VideoPlayer
                 url="https://www.youtube.com/watch?v=vyzcyJJmBzc"
-                playing
-                muted
               />
             </div>
           </div>

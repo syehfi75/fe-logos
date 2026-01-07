@@ -8,7 +8,7 @@ export default function VideoPlayer({
   url,
   last_duration = 0,
   duration = 0,
-  trackProgress = false,
+  enableProgressTracking = false,
 }: any) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const playerRef = useRef<any>(null);
@@ -35,7 +35,7 @@ export default function VideoPlayer({
       });
 
       player.on("timeupdate", async ({ seconds, duration: videoDuration }: any) => {
-        if (!trackProgress) return;
+        if (!enableProgressTracking) return;
 
         const now = Date.now();
         if (now - lastSavedRef.current < 30000) return;
@@ -50,6 +50,7 @@ export default function VideoPlayer({
       });
 
       player.on("ended", async () => {
+        if (!enableProgressTracking) return;
         await postProgress({
           last_position: duration,
           video_duration: duration,

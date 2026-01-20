@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export interface IResponsePost<T> {
   status: boolean;
   message: null | string;
+  messages?: any,
   /** data atau error */
   data: T;
   postedData: any;
@@ -125,9 +126,9 @@ export function useFetchTriggerToken<T = any>(
 export function usePostUmum<T = any>(
   jenisApi: TJenisAPI,
   link: string | null,
-  denganToken = true
+  // denganToken = true
 ): THasilPost<T> {
-  const token = useAuthStore.getState().accessToken;
+  // const token = useAuthStore.getState().accessToken;
   const [loading, setLoading] = useState(true);
 
   const cancelTokenSebelumnya = useRef<CancelTokenSource | null>(null);
@@ -155,15 +156,15 @@ export function usePostUmum<T = any>(
         apiTerpilih,
         dataPost,
         link,
-        denganToken,
-        token,
+        // denganToken,
+        // token,
         cancelToken.current
       );
       linkSebelumnya.current = link;
       setLoading(false);
       return hasilFetch.data;
     },
-    [jenisApi, link, token]
+    [jenisApi, link]
   );
 
   return [post, loading, cancelToken.current];

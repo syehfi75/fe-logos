@@ -124,19 +124,12 @@ export const postUmum = async (
   apiTerpilih: string,
   postedData: any,
   link: string | null,
-  denganToken = true,
-  token: any,
+  // denganToken = true,
+  // token: any,
   reqCancelToken: any
 ) => {
   try {
     const response = await axios.post(`${apiTerpilih}${link}`, postedData, {
-      headers:
-        denganToken && token
-          ? {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          }
-          : {},
       cancelToken: reqCancelToken.token,
     });
     return {

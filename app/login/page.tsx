@@ -1,5 +1,7 @@
 "use client";
+import { loginSchema } from "@/schema/login.schema";
 import { useAuthStore } from "@/store/auth";
+import { usePostUmumToken } from "@/utils/useFetchUmum";
 import axios from "axios";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,6 +11,7 @@ import { toast } from "sonner";
 export default function LoginPage() {
   const router = useRouter();
   const login = useAuthStore((state) => state.login);
+  const [registerUser] = usePostUmumToken("apiBase", "/api/register", false);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<
     "login" | "signup" | "forgot_pass"
@@ -48,50 +51,41 @@ export default function LoginPage() {
   };
 
   const handleLoginSubmit = async () => {
+    const result = loginSchema.safeParse(loginForm);
+
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+      const messages = Object.values(fieldErrors).flat().join("\n");
+      toast.error(messages);
+      return;
+    }
     setIsLoading(true);
+
     try {
-      
-      // console.log("Login sukses:", data);
-      await login(loginForm.email, loginForm.password)
-
-      // localStorage.setItem("token", data.token);
-
-      setIsLoading(false);
+      await login(loginForm.email, loginForm.password);
       router.push("/dashboard");
     } catch (error: any) {
-      console.log('error', error);
-      
+      console.log(error);
+      const messages = Object.values(error?.messages).join("\n");
+      toast.error(messages);
+    } finally {
       setIsLoading(false);
-      toast.error(error.response?.data?.messages.error || "Unknown error");
     }
   };
 
   const handleRegisterSubmit = async () => {
     setIsLoading(true);
-    try {
-      const res = await axios.post(
-        process.env.NEXT_PUBLIC_API_AUTH + "/api/register",
-        signupForm
-      );
-
-      const data = res.data;
-      setIsLoading(false);
+    const res = await registerUser(signupForm);
+    setIsLoading(false);
+    if (res?.message) {
       toast.success(
         "Please confirm your account by clicking the activation link in the email we have sent."
       );
-    } catch (error: any) {
       setIsLoading(false);
-      const errorData = error.response?.data;
-
-      if (errorData && typeof errorData === "object") {
-        const messages = Object.values(errorData.messages).join("\n");
-        toast.error(messages);
-      } else {
-        toast.error(
-          error.response?.data?.messages.error || "Unknown error occurred."
-        );
-      }
-      // toast.error(error.response?.data?.messages.error || "Unknown error");
+    } else {
+      const messages = Object.values(res?.messages).join("\n");
+      toast.error(messages);
+      setIsLoading(false);
     }
   };
 
@@ -104,9 +98,6 @@ export default function LoginPage() {
           email: emailPass,
         }
       );
-
-      // const data = res.data;
-      // console.log("register:", data);
       setIsLoading(false);
       toast.success(
         "A security token has been emailed to you. Enter it in the box below to continue."
@@ -180,6 +171,7 @@ export default function LoginPage() {
               </span>
               <input
                 type={passwordVisible ? "text" : "password"}
+                onKeyDown={(e) => e.key === "Enter" && handleLoginSubmit()}
                 name="password"
                 placeholder="Password"
                 value={loginForm.password}

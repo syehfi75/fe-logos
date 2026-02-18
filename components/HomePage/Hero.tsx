@@ -18,17 +18,16 @@ export default function HeroHomePage() {
           }}
         />
         <div className="relative mx-auto w-5/6 p-20">
-          <div className="flex flex-col items-center justify-center w-full h-full">
-            <h1 className="text-white font-bold text-8xl text-center mb-8">
-              A better you <br /> every day
-            </h1>
-            <p className="text-2xl text-[#CED1D7] font-medium">
-              Be part of the world’s most powerful life transformation platform
+          <div className="flex flex-col gap-4 items-center justify-center w-full h-full">
+            <p className="text-gray-400 text-2xl">
+              Solve Life Challenges with SEFT Learning
             </p>
-            <div className="w-full h-[600px] mt-9 rounded-xl"> 
-              <VideoPlayer
-                url="https://www.youtube.com/embed/vyzcyJJmBzc?si=1Gw7dy1J-VHO_5Zo"
-              />
+            <h1 className="text-white font-bold text-8xl text-center mb-8">
+              One Platform. <br /> Many Life Solutions.
+            </h1>
+            <div className="flex gap-2">
+              <button className="bg-white text-black rounded-md p-2">Become a member</button>
+              <button className="border border-white text-white rounded-md p-2">Explore Program</button>
             </div>
           </div>
         </div>

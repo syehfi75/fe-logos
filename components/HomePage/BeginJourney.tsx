@@ -9,7 +9,7 @@ export default function BeginJourney() {
   const slideShowRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<gsap.core.Tween | null>(null);
 
-  useGSAP(() => {
+  (useGSAP(() => {
     const el = slideShowRef.current;
     if (!el) return;
 
@@ -24,11 +24,11 @@ export default function BeginJourney() {
         duration: 20,
         ease: "none",
         repeat: -1,
-      }
+      },
     );
 
     animationRef.current = tween;
-    tween.timeScale(0.5)
+    tween.timeScale(0.5);
 
     const slowDown = () => tween.timeScale(0.3);
     const normalSpeed = () => tween.timeScale(0.5);
@@ -42,54 +42,29 @@ export default function BeginJourney() {
       tween.kill();
     };
   }),
-    [];
+    []);
 
   return (
     <>
-      <div className="container mx-auto px-20 overflow-hidden mt-8">
+      <div className="container mx-auto overflow-hidden mt-8">
         <div className="flex flex-col justify-center items-center gap-4 mb-10">
-          <h1 className="text-7xl font-bold">Begin your journey today</h1>
+          <h1 className="text-7xl font-bold">
+            Begin Your Healing and Growth Journey Today
+          </h1>
           <p className="text-2xl text-gray-500 text-center">
-            Unlock your fullest potential in any field with only 20-minutes a
-            day of invaluable coaching from the world’s best
+            Release inner blocks and align mind, heart, and soul to resolve life
+            challenges with SEFT.
           </p>
-          <button className="outline-0 bg-logos-green text-white font-bold text-xl p-4 rounded-full w-64">
-            Become a member
-          </button>
         </div>
-      </div>
-      <div className="mt-32">
-        <div className="container mx-auto px-20 w-full">
-          <div className="flex flex-col gap-4 w-2/3">
-            <p className="uppercase text-logos-green">growth in all areas</p>
-            <h4 className="text-4xl font-bold">
-              100+ of the world’s top programs for personal growth and
-              transformation
-            </h4>
-            <p className="text-lg text-gray-500">
-              Forge lasting transformations in your mind, body, soul, love and
-              career with 20-minute micro-coaching sessions each day led by
-              top-tier teachers worldwide.
+        <div className="flex justify-center gap-4 p-2.5">
+          
+          <div className="flex flex-col gap-2 bg-white p-4 border border-gray-200 rounded-xl shadow-lg max-w-[365px]">
+            <h3 className="font-bold text-2xl">FREE CLASS</h3>
+            <p className="text-gray-500 text-xl">
+              Free class to learn basic SEFT and understand solving emotional
+              mental and spiritual life challenges simply.
             </p>
-          </div>
-        </div>
-        <div className="overflow-hidden w-full mt-6">
-          <div ref={slideShowRef} className="flex gap-4 cursor-pointer w-max">
-            <div className="slide rounded-md w-[450px] h-[200px] shrink-0">
-              <Image src={banner1} alt="" />
-            </div>
-            <div className="slide rounded-md w-[450px] h-[200px] shrink-0">
-              <Image src={banner2} alt="" />
-            </div>
-            <div className="slide rounded-md w-[450px] h-[200px] shrink-0">
-              <Image src={banner3} alt="" />
-            </div>
-            <div className="slide rounded-md w-[450px] h-[200px] shrink-0">
-              <Image src={banner4} alt="" />
-            </div>
-            <div className="slide rounded-md w-[450px] h-[200px] shrink-0">
-              <Image src={banner5} alt="" />
-            </div>
+            <p className="text-xl text-red-500 mt-4">Coming Soon</p>
           </div>
         </div>
       </div>

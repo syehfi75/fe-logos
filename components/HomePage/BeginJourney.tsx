@@ -1,73 +1,48 @@
 "use client";
-import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import Image from "next/image";
-import { banner1, banner2, banner3, banner4, banner5 } from "./assets";
+import useHomeStore from "@/store/useHomeStore";
 
 export default function BeginJourney() {
-  const slideShowRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<gsap.core.Tween | null>(null);
-
-  (useGSAP(() => {
-    const el = slideShowRef.current;
-    if (!el) return;
-
-    el.innerHTML += el.innerHTML;
-    const totalWidth = el.scrollWidth / 2;
-
-    const tween = gsap.fromTo(
-      el,
-      { x: 0 },
-      {
-        x: -totalWidth,
-        duration: 20,
-        ease: "none",
-        repeat: -1,
-      },
-    );
-
-    animationRef.current = tween;
-    tween.timeScale(0.5);
-
-    const slowDown = () => tween.timeScale(0.3);
-    const normalSpeed = () => tween.timeScale(0.5);
-
-    el.addEventListener("mouseenter", slowDown);
-    el.addEventListener("mouseleave", normalSpeed);
-
-    return () => {
-      el.removeEventListener("mouseenter", slowDown);
-      el.removeEventListener("mouseleave", normalSpeed);
-      tween.kill();
-    };
-  }),
-    []);
+  const data = useHomeStore((state) => state.homeData?.section1); 
+  if (!data) return null; 
 
   return (
-    <>
-      <div className="container mx-auto overflow-hidden mt-8">
-        <div className="flex flex-col justify-center items-center gap-4 mb-10">
-          <h1 className="text-7xl font-bold">
-            Begin Your Healing and Growth Journey Today
-          </h1>
-          <p className="text-2xl text-gray-500 text-center">
-            Release inner blocks and align mind, heart, and soul to resolve life
-            challenges with SEFT.
+    <section className="bg-white py-20 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-black mb-6 tracking-tight">
+            {data.title}
+          </h2>
+          <p className="text-gray-500 text-lg md:text-[32px] max-w-3xl mx-auto">
+            {data.desc}
           </p>
         </div>
-        <div className="flex justify-center gap-4 p-2.5">
-          
-          <div className="flex flex-col gap-2 bg-white p-4 border border-gray-200 rounded-xl shadow-lg max-w-[365px]">
-            <h3 className="font-bold text-2xl">FREE CLASS</h3>
-            <p className="text-gray-500 text-xl">
-              Free class to learn basic SEFT and understand solving emotional
-              mental and spiritual life challenges simply.
-            </p>
-            <p className="text-xl text-red-500 mt-4">Coming Soon</p>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {data.packages.map((card: any, index: any) => (
+            <div
+              key={index}
+              className="flex flex-col justify-between p-8 bg-white border border-gray-100 rounded-2xl shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] hover:shadow-xl transition-shadow duration-300"
+            >
+              <div>
+                <h3 className="font-bold text-xl mb-4 text-gray-900">
+                  {card.title}
+                </h3>
+                <p className="text-gray-500 leading-relaxed mb-8">
+                  {card.desc}
+                </p>
+              </div>
+              <div className="mt-auto">
+                {!card.status ? (
+                  <span className="text-red-500 font-medium">Coming Soon</span>
+                ) : (
+                  <button className="flex items-center gap-2 font-medium text-gray-900 hover:gap-3 transition-all">
+                    {card.text}
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    </>
+    </section>
   );
 }

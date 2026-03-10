@@ -101,7 +101,6 @@ export function getLessonColumns(opts: {
       cell: ({ row }) => {
         const url = row.original.thumbnail;
         return url ? (
-          // pakai <img> agar tidak perlu config next/image
           <img
             src={url}
             alt={row.original.title}

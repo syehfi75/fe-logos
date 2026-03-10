@@ -8,6 +8,7 @@ import VideoPlayer from "../VideoPlayer/VideoPlayer";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ListResources from "./ListResource";
+import { LessonTab } from "./Tabs/LessonsTab";
 
 export default function PreviewLesson({ slug }: Props) {
   const router = useRouter();
@@ -48,6 +49,14 @@ export default function PreviewLesson({ slug }: Props) {
     }
   }, [activeTab]);
 
+  const getImageUrl = (path: string | null) => {
+    if (!path) return "/placeholder.png";
+    if (path.startsWith("http")) return path;
+
+    const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+    return `https://api.afzan.co/${cleanPath}`;
+  };
+
   return (
     <>
       <div className="container mx-auto px-40">
@@ -79,7 +88,7 @@ export default function PreviewLesson({ slug }: Props) {
         <div className="flex mt-4 gap-6">
           {courseDetail?.thumbnail && (
             <Image
-              src={courseDetail?.thumbnail}
+              src={getImageUrl(courseDetail?.thumbnail)}
               alt={courseDetail?.description || ""}
               width={200}
               height={200}
@@ -132,43 +141,16 @@ export default function PreviewLesson({ slug }: Props) {
         <div className="mt-6 text-white">
           {activeTab === "Overview" && <p>Ini halaman Overview</p>}
           {activeTab === "Lessons" && (
-            <>
-              {courseDetail?.lessons.map((lesson) => (
-                <div
-                  key={lesson.slug}
-                  className="p-4 border-b border-gray-700 hover:bg-gray-800 cursor-pointer transition-all ease-in-out duration-500"
-                  onClick={() => router.push(`/lesson/${slug}`)}
-                >
-                  <div className="flex items-center">
-                    <Image
-                      src={lesson.thumbnail}
-                      alt={lesson.title}
-                      width={200}
-                      height={200}
-                      className="rounded-lg mr-4"
-                    />
-                    <div className="flex flex-col">
-                      <h2 className="text-lg font-semibold">{lesson.title}</h2>
-                      <p className="text-sm text-gray-400">
-                        {lesson.description}
-                      </p>
-                      <p className="text-sm text-gray-500 mt-2">
-                        {Math.floor(lesson.duration / 60)} minutes
-                      </p>
-                    </div>
-                    <div className="ml-auto flex items-center gap-2">
-                      <ChevronRight />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </>
+            <LessonTab data={courseDetail?.lessons} slug={slug} />
           )}
           {activeTab === "Resource" && (
             <div>
               {resourcesCourseDetail?.resources &&
                 resourcesCourseDetail.resources.length > 0 && (
-                  <ListResources resources={resourcesCourseDetail.resources} typeOrder={['pdf']} />
+                  <ListResources
+                    resources={resourcesCourseDetail.resources}
+                    typeOrder={["pdf"]}
+                  />
                   // <div className="mt-6">
                   //   <ul className="space-y-2">
                   //     {resourcesCourseDetail.resources.map((resource: any) => (

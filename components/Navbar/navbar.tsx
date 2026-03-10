@@ -1,177 +1,262 @@
 "use client";
-
-import { logoutUser, useAuthStore } from "@/store/auth";
-import { CircleUserRound } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import Modal from "../Modal/Modal";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { usePaymentStore } from "@/store/payment";
-import { formatPrice } from "@/utils/formatPrice";
+import { useAuthStore } from "@/store/auth";
+import { ShoppingCart, User } from "lucide-react";
 
-function Navbar() {
-  const user = useAuthStore((state) => state);
+gsap.registerPlugin(ScrollTrigger);
+
+export default function Navbar() {
+  const navRef = useRef(null);
+  const menuRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
   const router = useRouter();
-  // const userLogout = useAuthStore((state) => state.logout);
-  const [open, setOpen] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const { list, fetchPlans } = usePaymentStore();
+  const { user, logout } = useAuthStore();
 
   useEffect(() => {
-    fetchPlans();
-  }, [fetchPlans]);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const nav = navRef.current;
+    gsap.set(nav, {
+      y: 20,
+      width: "95%",
+      maxWidth: "1200px",
+    });
+
+    const trigger = ScrollTrigger.create({
+      start: "top -10",
+      onEnter: () => {
+        setIsScrolled(true);
+        gsap.to(nav, {
+          y: 15,
+          width: window.innerWidth < 768 ? "90%" : "80%",
+          maxWidth: "1000px",
+          backgroundColor: "rgba(255, 255, 255, 0.8)",
+          backdropFilter: "blur(15px)",
+          padding: "10px 24px",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+          borderRadius: "100px",
+          duration: 0.7,
+          ease: "expo.out",
+        });
+      },
+      onLeaveBack: () => {
+        setIsScrolled(false);
+        gsap.to(nav, {
+          y: 20,
+          width: "95%",
+          maxWidth: "1200px",
+          backgroundColor: "transparent",
+          backdropFilter: "blur(0px)",
+          padding: "20px 40px",
+          boxShadow: "none",
+          duration: 0.6,
+          ease: "power3.inOut",
+        });
+      },
+    });
+
+    return () => trigger.kill();
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      gsap.to(menuRef.current, {
+        clipPath: "circle(150% at 100% 0%)",
+        duration: 1,
+        ease: "expo.inOut",
+      });
+    } else {
+      gsap.to(menuRef.current, {
+        clipPath: "circle(0% at 100% 0%)",
+        duration: 0.8,
+        ease: "expo.inOut",
+      });
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setOpen(false);
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowUserMenu(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleLogout = () => {
+    logout();
+    setShowUserMenu(false);
+    router.push("/");
+  };
+
   return (
     <>
-      <nav className="relative z-10 flex items-center justify-between p-4 bg-logos-green text-white font-grostek">
-        <div className="flex justify-between items-center w-full max-w-6xl mx-auto">
-          <div className="flex items-center space-x-4">
-            <Link href="/" className="text-lg">
-              Logo
-            </Link>
-            <a href="#" className="text-lg">
-              Membership
-            </a>
-            <a href="#" className="text-lg">
-              Categories
-            </a>
-            <a href="#" className="text-lg">
-              Community
-            </a>
-            <a href="#" className="text-lg">
-              Results
-            </a>
-            <a href="#" className="text-lg">
-              At Work
-            </a>
-            <a href="#" className="text-lg">
-              Support
-            </a>
-          </div>
-          {user.user ? (
-            <div className="relative" ref={menuRef}>
-              <div className="flex items-center">
-                <button
-                  className="bg-emerald-700 cursor-pointer ml-auto p-2 rounded-full mr-8 w-35 shadow-md hover:shadow-xl transition-all"
-                  onClick={() => setOpenModal(!openModal)}
-                >
-                  Upgrade
-                </button>
-                <button
-                  onClick={() => setOpen(!open)}
-                  className="hover:text-logos-green transition"
-                >
-                  <CircleUserRound size={28} />
-                </button>
-              </div>
+      <nav
+        ref={navRef}
+        className="fixed top-0 left-1/2 -translate-x-1/2 w-full z-[60] flex items-center justify-between"
+      >
+        <div
+          className={`text-xl font-bold z-[70] transition-colors duration-500 ${
+            isScrolled || isOpen ? "text-purple-900" : "text-white"
+          }`}
+        >
+          LOGO
+        </div>
 
-              <div
-                className={`absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-lg z-50 overflow-hidden transform transition-all duration-200 origin-top ${
-                  open
-                    ? "opacity-100 scale-100"
-                    : "opacity-0 scale-95 pointer-events-none"
-                }`}
+        <div
+          className={`hidden md:flex items-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em] ${
+            isScrolled ? "text-gray-600" : "text-white"
+          }`}
+        >
+          <Link href="/" className="hover:text-purple-500 transition-colors">
+            Home
+          </Link>
+          <Link href="#" className="hover:text-purple-500 transition-colors">
+            Programs
+          </Link>
+          <Link href="#" className="hover:text-purple-500 transition-colors">
+            Membership
+          </Link>
+        </div>
+        <div className="flex items-center gap-3 z-[70]">
+          {mounted && user ? (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-2 group focus:outline-none"
               >
-                <div className="flex flex-col py-2 px-4">
-                  <span className="text-sm text-gray-600 mb-2">
-                    {user.user.username}
-                  </span>
+                <ShoppingCart width={34} height={34} />
+                <div className="w-10 h-10 rounded-full border-2 border-purple-500 overflow-hidden transition-transform cursor-pointer">
+                  <User width={34} height={34} />
+                </div>
+              </button>
+
+              {showUserMenu && (
+                <div className="absolute right-0 mt-4 w-56 bg-white rounded-2xl shadow-2xl py-2 border border-gray-100 overflow-hidden transition-all duration-300">
+                  <div className="px-4 py-3 border-b border-gray-50 mb-1">
+                    <p className="font-bold text-purple-900 text-xs truncate">
+                      {user.username || "User"}
+                    </p>
+                    <p className="text-[10px] text-gray-400 truncate">
+                      {user.email}
+                    </p>
+                  </div>
                   <Link
                     href="/dashboard"
-                    className="text-sm hover:bg-gray-100 px-2 py-1 rounded-lg transition-colors text-black"
+                    className="block px-4 py-2 text-xs font-bold text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors uppercase"
                   >
                     Dashboard
                   </Link>
+                  {/* <Link
+                    href="/profile"
+                    className="block px-4 py-2 text-xs font-bold text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors uppercase"
+                  >
+                    Settings
+                  </Link> */}
                   <button
-                    onClick={() => {
-                      logoutUser();
-                      setOpen(false);
-                      // router.push("/");
-                    }}
-                    className="text-left text-red-600 hover:bg-red-600/15 text-sm cursor-pointer rounded-lg transition-colors duration-500"
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-xs font-black text-red-500 hover:bg-red-50 uppercase transition-colors cursor-pointer"
                   >
                     Logout
                   </button>
                 </div>
-              </div>
+              )}
             </div>
           ) : (
-            <div className="flex items-center space-x-4">
-              <Link href={"/login"} className="text-lg">
-                Login
-              </Link>
-              <Link
-                href="/login?state=register"
-                className="text-lg border border-white px-4 py-2 rounded-full hover:bg-gray/30 hover:text-white transition-colors"
-              >
-                Create an account
-              </Link>
-            </div>
-          )}
-        </div>
-        <Modal
-          open={openModal}
-          onClose={() => setOpenModal(false)}
-          title="Upgrade Membership"
-          size="xl"
-        >
-          <div>
-            {list
-              ?.filter((item: any) => item.id !== "1" && item.id !== "4")
-              .map((item: any) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between p-4 border-b last:border-b-0 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => {
-                    router.push(`/subscribe/${item.type}`);
-                    setOpenModal(false);
-                  }}
-                >
-                  <div className="flex items-center space-x-4">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-12 h-12 rounded-full"
-                    />
-                    <div>
-                      <h3 className="text-lg font-semibold">{item.name}</h3>
-                      <p className="text-sm text-gray-600">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                  <span className="text-lg font-bold">{formatPrice(item.price)}</span>
-                </div>
-              ))}
-            <div className="p-4 text-center">
-              <p className="text-sm text-gray-600">
-                Choose a plan that suits you best.
-              </p>
-            </div>
-          </div>
-          <div className="flex justify-end p-4">
             <button
-              onClick={() => setOpenModal(false)}
-              className="bg-logos-green text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+              onClick={() => router.push("/login")}
+              className="cursor-pointer px-6 py-2 bg-purple-600 text-white text-[10px] font-bold uppercase rounded-full shadow-lg hover:bg-purple-700 hover:scale-105 transition-all active:scale-95"
             >
-              Close
+              Login
             </button>
-          </div>
-        </Modal>
+          )}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden flex flex-col gap-1.5 p-2 focus:outline-none"
+          >
+            <span
+              className={`h-0.5 w-6 bg-current transition-all duration-500 ${
+                isOpen
+                  ? "rotate-45 translate-y-2 text-purple-900"
+                  : isScrolled
+                    ? "text-purple-900"
+                    : "text-white"
+              }`}
+            />
+            <span
+              className={`h-0.5 w-6 bg-current transition-all duration-300 ${
+                isOpen
+                  ? "opacity-0"
+                  : isScrolled
+                    ? "text-purple-900"
+                    : "text-white"
+              }`}
+            />
+            <span
+              className={`h-0.5 w-6 bg-current transition-all duration-500 ${
+                isOpen
+                  ? "-rotate-45 -translate-y-2 text-purple-900"
+                  : isScrolled
+                    ? "text-purple-900"
+                    : "text-white"
+              }`}
+            />
+          </button>
+        </div>
       </nav>
+
+      <div
+        ref={menuRef}
+        style={{ clipPath: "circle(0% at 100% 0%)" }}
+        className="fixed inset-0 bg-white z-[55] flex flex-col items-center justify-center gap-8 text-3xl font-bold text-purple-900"
+      >
+        <Link
+          href="/"
+          onClick={() => setIsOpen(false)}
+          className="hover:scale-110 transition-transform"
+        >
+          Home
+        </Link>
+        <Link
+          href="#"
+          onClick={() => setIsOpen(false)}
+          className="hover:scale-110 transition-transform"
+        >
+          Programs
+        </Link>
+        <Link
+          href="#"
+          onClick={() => setIsOpen(false)}
+          className="hover:scale-110 transition-transform"
+        >
+          Membership
+        </Link>
+        {mounted && user && (
+          <Link
+            href="/dashboard"
+            onClick={() => setIsOpen(false)}
+            className="text-purple-500"
+          >
+            Dashboard
+          </Link>
+        )}
+      </div>
     </>
   );
 }
-
-export default Navbar;

@@ -123,52 +123,52 @@ export function useFetchTriggerToken<T = any>(
 }
 
 // Nanti di edit tanpa token
-export function usePostUmum<T = any>(
-  jenisApi: TJenisAPI,
-  link: string | null,
-  // denganToken = true
-): THasilPost<T> {
-  // const token = useAuthStore.getState().accessToken;
-  const [loading, setLoading] = useState(true);
+// export function usePostUmum<T = any>(
+//   jenisApi: TJenisAPI,
+//   link: string | null,
+//   // denganToken = true
+// ): THasilPost<T> {
+//   // const token = useAuthStore.getState().accessToken;
+//   const [loading, setLoading] = useState(true);
 
-  const cancelTokenSebelumnya = useRef<CancelTokenSource | null>(null);
-  const cancelToken = useRef(axios.CancelToken.source());
+//   const cancelTokenSebelumnya = useRef<CancelTokenSource | null>(null);
+//   const cancelToken = useRef(axios.CancelToken.source());
 
-  const linkSebelumnya = useRef<string | null>(null);
+//   const linkSebelumnya = useRef<string | null>(null);
 
-  const post = useCallback(
-    async (dataPost: any) => {
-      const batalkan = {
-        status: false,
-        message: "link kosong",
-        data: null,
-        postedData: dataPost,
-        responseCode: 499,
-      } as IResponsePost<any>;
-      const apiTerpilih = cekAPI(jenisApi) ?? "";
-      const linkKosong = link === null || link === undefined;
-      if (linkKosong) return batalkan;
-      setLoading(true);
-      cancelTokenSebelumnya.current?.cancel();
-      cancelTokenSebelumnya.current = cancelToken.current;
-      cancelToken.current = axios.CancelToken.source();
-      const hasilFetch = await postUmum(
-        apiTerpilih,
-        dataPost,
-        link,
-        // denganToken,
-        // token,
-        cancelToken.current
-      );
-      linkSebelumnya.current = link;
-      setLoading(false);
-      return hasilFetch.data;
-    },
-    [jenisApi, link]
-  );
+//   const post = useCallback(
+//     async (dataPost: any) => {
+//       const batalkan = {
+//         status: false,
+//         message: "link kosong",
+//         data: null,
+//         postedData: dataPost,
+//         responseCode: 499,
+//       } as IResponsePost<any>;
+//       const apiTerpilih = cekAPI(jenisApi) ?? "";
+//       const linkKosong = link === null || link === undefined;
+//       if (linkKosong) return batalkan;
+//       setLoading(true);
+//       cancelTokenSebelumnya.current?.cancel();
+//       cancelTokenSebelumnya.current = cancelToken.current;
+//       cancelToken.current = axios.CancelToken.source();
+//       const hasilFetch = await postUmum(
+//         apiTerpilih,
+//         dataPost,
+//         link,
+//         // denganToken,
+//         // token,
+//         cancelToken.current
+//       );
+//       linkSebelumnya.current = link;
+//       setLoading(false);
+//       return hasilFetch.data;
+//     },
+//     [jenisApi, link]
+//   );
 
-  return [post, loading, cancelToken.current];
-}
+//   return [post, loading, cancelToken.current];
+// }
 
 // usePostUmum dengan token
 export function usePostUmumToken<T = any>(

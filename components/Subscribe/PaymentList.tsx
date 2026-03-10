@@ -1,7 +1,7 @@
 "use client";
-import { usePostUmum, usePostUmumToken } from "@/utils/useFetchUmum";
+import {  usePostUmumToken } from "@/utils/useFetchUmum";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 
 type PaymentMethod = {
   code: string;
@@ -44,7 +44,7 @@ function groupByType(items: PaymentMethod[]) {
 export default function PaymentList({ methods, typeOrder, selectedPlan }: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
-  const [postPayment] = usePostUmumToken("apiBase", "/api/user/subscribe/manual-with-paymentmethod");
+  const [postPayment] = usePostUmumToken("apiBase", "/api/user/subscribe/multiplan-with-paymentmethod");
   const router = useRouter();
 
   const handleSubmit = async () => {

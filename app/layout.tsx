@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import 'react-loading-skeleton/dist/skeleton.css'
+import "react-loading-skeleton/dist/skeleton.css";
 import { Suspense } from "react";
 import Providers from "./providers";
 import { Toaster } from "sonner";
+import Navbar from "@/components/Navbar/navbar";
+import FullPageLoader from "@/components/FullPageLoader";
 
 const grostek = localFont({
   src: "./fonts/Grostek-vf.ttf",
@@ -22,8 +24,9 @@ const grostekItalic = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'SEFT Learning - One Platform. Many Life Solutions.',
-  description: 'Begin your healing and growth journey today. Release inner blocks and resolve life challenges with SEFT.',
+  title: "SEFT Learning - One Platform. Many Life Solutions.",
+  description:
+    "Begin your healing and growth journey today. Release inner blocks and resolve life challenges with SEFT.",
 };
 
 export default function RootLayout({
@@ -38,7 +41,9 @@ export default function RootLayout({
       >
         <Suspense>
           <Providers>
-            {children} 
+            <FullPageLoader />
+            <Navbar />
+            {children}
             <Toaster position="top-center" closeButton richColors />
           </Providers>
         </Suspense>

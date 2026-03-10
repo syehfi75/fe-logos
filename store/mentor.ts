@@ -6,7 +6,6 @@ interface MentorState {
   mentorKursus: any[] | null;
   loading: boolean;
   error: string | null;
-  lastFetched: number | null;
   fetchMentorKursus: () => Promise<void>;
   ensureMentorKursus: (maxAgeMs?: number) => Promise<void>;
   deleteCourse: (id: string | number) => Promise<void>;
@@ -15,9 +14,6 @@ interface MentorState {
 export const useMentorStore = create<MentorState>()(
   devtools((set, get) => ({
     mentorKursus: null,
-    loading: false,
-    error: null,
-    lastFetched: null,
 
     fetchMentorKursus: async () => {
       set({ loading: true, error: null });
@@ -26,7 +22,6 @@ export const useMentorStore = create<MentorState>()(
         if (res.success) {
           set({
             mentorKursus: res.data || null,
-            lastFetched: Date.now(),
             loading: false,
           });
         } else {
@@ -36,19 +31,24 @@ export const useMentorStore = create<MentorState>()(
         set({ error: "Terjadi kesalahan jaringan", loading: false });
       }
     },
-    ensureMentorKursus: async (maxAgeMs = 5 * 60 * 1000) => {
-      const { mentorKursus, fetchMentorKursus } = get();
-      // const fresh = lastFetched && Date.now() - lastFetched < maxAgeMs;
-      // console.log("mentorKursus", mentorKursus, lastFetched);
-
-      if (mentorKursus) return;
+    ensureMentorKursus: async () => {
+      const { mentorKursus, loading, fetchMentorKursus } = get();
+      if (mentorKursus && mentorKursus.length > 0) {
+        return;
+      }
+      if (loading) return;
       await fetchMentorKursus();
     },
     deleteCourse: async (id) => {
       const prev = get().mentorKursus;
-      set({ mentorKursus: prev?.filter((c: any) => String(c.id) !== String(id)) });
+      set({
+        mentorKursus: prev?.filter((c: any) => String(c.id) !== String(id)),
+      });
       try {
-        const res = await deleteDataToken("apiBase", `/api/mentor/courses/${id}`);
+        const res = await deleteDataToken(
+          "apiBase",
+          `/api/mentor/courses/${id}`,
+        );
         if (!res.success) {
           throw new Error(res.message || "Gagal menghapus data");
         }
@@ -57,5 +57,5 @@ export const useMentorStore = create<MentorState>()(
         throw err;
       }
     },
-  }))
+  })),
 );

@@ -1,6 +1,5 @@
 "use client";
 
-import Navbar from "@/components/Navbar/navbar";
 import { useAuthStore } from "@/store/auth";
 import { useCourseStore } from "@/store/course";
 import { checkAndRefreshToken } from "@/utils/checkToken";
@@ -14,7 +13,7 @@ export default function Dashboard() {
   const user = useAuthStore((state) => state.user);
   const { courses, loading, fetchCourses } = useCourseStore();
   const router = useRouter();
-  console.log(courses);
+  // console.log(courses);
 
   useEffect(() => {
     fetchCourses();
@@ -30,8 +29,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <Navbar />
-      <div className="container mx-auto px-20">
+      <div className="container mx-auto pt-24 px-4 md:px-20">
         <h1 className="font-bold text-5xl py-6">Hi, {user?.username}</h1>
       </div>
       <div className="bg-gray-300/20 py-12">
@@ -39,17 +37,19 @@ export default function Dashboard() {
           <p className="font-bold text-3xl">Continue Learning</p>
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-              {Array(3).fill(null).map((_, idx) => (
-                <div key={idx} className="bg-white rounded-lg shadow-md">
-                  <div className="flex gap-2 p-4 cursor-pointer">
-                    <Skeleton width={96} height={96} className="rounded-lg" />
-                    <div className="flex flex-col p-4">
-                      <Skeleton width={180} height={24} className="mb-2" />
-                      <Skeleton width={130} height={16} className="mb-2" />
+              {Array(3)
+                .fill(null)
+                .map((_, idx) => (
+                  <div key={idx} className="bg-white rounded-lg shadow-md">
+                    <div className="flex gap-2 p-4 cursor-pointer">
+                      <Skeleton width={96} height={96} className="rounded-lg" />
+                      <div className="flex flex-col p-4">
+                        <Skeleton width={180} height={24} className="mb-2" />
+                        <Skeleton width={130} height={16} className="mb-2" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">

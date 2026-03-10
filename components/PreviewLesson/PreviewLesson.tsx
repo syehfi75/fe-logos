@@ -1,5 +1,4 @@
 "use client";
-
 import "./style.css";
 import { useCourseStore } from "@/store/course";
 import { ArrowLeft, ChevronRight } from "lucide-react";
@@ -59,50 +58,47 @@ export default function PreviewLesson({ slug }: Props) {
 
   return (
     <>
-      <div className="container mx-auto px-40">
-        <nav className={`sticky top-0 z-10`}>
+      <div className="container mx-auto px-4 md:px-20 lg:px-40">
+        <nav className={`sticky top-0 z-50`}>
           <div
             className={`absolute left-0 top-0 flex items-center gap-2 mb-4 py-5 text-white w-full px-4 ${
-              scrolled ? "bg-black" : "bg-transparent"
+              scrolled ? "bg-black/80 backdrop-blur-md" : "bg-transparent"
             } transition-all duration-500 ease-in-out}`}
           >
             <ArrowLeft
-              className="cursor-pointer"
+              className="cursor-pointer shrink-0"
               onClick={() => router.back()}
             />
-            <h1 className="font-bold text-xl w-full text-center">
+
+            <h1 className="font-bold text-lg md:text-xl w-full text-center pr-8">
               {courseDetail?.title}
             </h1>
           </div>
         </nav>
-        {/* TODO: Sementara disable untuk video preview, untuk h-20 dihilangkan ketika sudah ada video preview */}
+
         <div className="h-20"></div>
-        {/* <div className="w-full">
-          <VideoPlayer
-            url="https://www.w3schools.com/html/mov_bbb.mp4"
-            playing
-            muted
-            className="rounded-b-2xl"
-          />
-        </div> */}
-        <div className="flex mt-4 gap-6">
+
+        <div className="flex flex-col md:flex-row mt-4 gap-6">
           {courseDetail?.thumbnail && (
-            <Image
-              src={getImageUrl(courseDetail?.thumbnail)}
-              alt={courseDetail?.description || ""}
-              width={200}
-              height={200}
-              className="rounded-lg"
-            />
+            <div className="flex justify-center md:justify-start">
+              <Image
+                src={getImageUrl(courseDetail?.thumbnail)}
+                alt={courseDetail?.description || ""}
+                width={200}
+                height={200}
+                className="rounded-lg w-full max-w-[200px] md:w-[200px] object-cover"
+              />
+            </div>
           )}
-          <div className="flex flex-col w-full">
-            <h1 className="font-bold text-2xl text-white">
+          <div className="flex flex-col w-full text-center md:text-left">
+            <h1 className="font-bold text-xl md:text-2xl text-white">
               {courseDetail?.title}
             </h1>
             <p className="text-gray-400/70 font-bold">
               {courseDetail?.instructor.name}
             </p>
-            <div className="flex gap-6 items-center mt-4">
+
+            <div className="flex flex-col md:flex-row gap-2 md:gap-6 items-center mt-4">
               <div className="w-full bg-gray-200 rounded-full h-1 mt-1.5">
                 <div
                   className="bg-blue-600 h-1 rounded-full"
@@ -111,15 +107,15 @@ export default function PreviewLesson({ slug }: Props) {
                   }}
                 ></div>
               </div>
-              <p className="text-white text-md w-1/4">
+              <p className="text-white text-sm md:text-md w-full md:w-1/3 whitespace-nowrap">
                 {courseDetail?.completed_lessons} of{" "}
                 {courseDetail?.total_lessons} lessons completed
               </p>
             </div>
           </div>
         </div>
-        {/* Tabs */}
-        <div className="flex gap-6 text-white text-2xl mt-8 border-b border-gray-700">
+
+        <div className="flex gap-4 md:gap-6 text-white text-lg md:text-2xl mt-8 border-b border-gray-700 overflow-x-auto no-scrollbar whitespace-nowrap">
           {tabs.map((tab) => (
             <button
               key={tab}
@@ -138,62 +134,27 @@ export default function PreviewLesson({ slug }: Props) {
           ))}
         </div>
 
-        <div className="mt-6 text-white">
-          {activeTab === "Overview" && <p>Ini halaman Overview</p>}
+        <div className="mt-6 text-white pb-10">
+          {activeTab === "Overview" && (
+            <p className="text-gray-300">Ini halaman Overview</p>
+          )}
           {activeTab === "Lessons" && (
             <LessonTab data={courseDetail?.lessons} slug={slug} />
           )}
           {activeTab === "Resource" && (
-            <div>
+            <div className="w-full overflow-hidden">
               {resourcesCourseDetail?.resources &&
                 resourcesCourseDetail.resources.length > 0 && (
                   <ListResources
                     resources={resourcesCourseDetail.resources}
                     typeOrder={["pdf"]}
                   />
-                  // <div className="mt-6">
-                  //   <ul className="space-y-2">
-                  //     {resourcesCourseDetail.resources.map((resource: any) => (
-                  //       <li
-                  //         key={resource.id}
-                  //         className="flex items-center gap-2 p-4 border-b border-gray-700 hover:bg-gray-800 transition-all ease-in-out duration-500"
-                  //       >
-                  //         <div className="flex">
-                  //           <Image
-                  //             src={
-                  //               resource.thumbnail || "/default-thumbnail.png"
-                  //             }
-                  //             alt={resource.title}
-                  //             width={150}
-                  //             height={300}
-                  //             className="rounded-lg mr-2"
-                  //           />
-                  //         </div>
-                  //         <div className="flex flex-col">
-                  //           <h1>{resource.title}</h1>
-                  //           <p className="text-gray-300 font-bold">
-                  //             {courseDetail?.instructor.name}
-                  //           </p>
-                  //           <Link
-                  //             href={resource.url}
-                  //             target="_blank"
-                  //             rel="noopener noreferrer"
-                  //             className="text-blue-600 mt-3"
-                  //           >
-                  //             Download
-                  //           </Link>
-                  //         </div>
-                  //         {/* <span className="text-sm text-gray-500">
-                  //           ({resource.type})
-                  //         </span> */}
-                  //       </li>
-                  //     ))}
-                  //   </ul>
-                  // </div>
                 )}
             </div>
           )}
-          {activeTab === "Stories" && <p>Story list</p>}
+          {activeTab === "Stories" && (
+            <p className="text-gray-300">Story list</p>
+          )}
         </div>
       </div>
     </>

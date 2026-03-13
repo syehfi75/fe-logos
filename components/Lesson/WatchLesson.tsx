@@ -114,13 +114,14 @@ export default function WatchLesson({ slug }: Props) {
 
         <div className="flex items-center gap-3 mt-4">
           <div className="rounded-full h-14 w-14 bg-black overflow-hidden">
-            <Image
+            {/* TODO: Avatar Instructor */}
+            {/* <Image
               src={courseDetail.instructor.avatar}
               alt={courseDetail.instructor.name}
               width={56}
               height={56}
               className="object-cover"
-            />
+            /> */}
           </div>
           <div className="flex flex-col">
             <p className="font-medium">{courseDetail.instructor.name}</p>
@@ -170,13 +171,14 @@ export default function WatchLesson({ slug }: Props) {
                 >
                   <div className="flex items-start gap-3">
                     <div className="relative flex-shrink-0">
-                      <Image
+                      {/* TODO: Thumbnail lesson */}
+                      {/* <Image
                         src={lesson.thumbnail}
                         alt={lesson.title}
                         width={80}
                         height={45}
                         className="w-20 h-[45px] object-cover rounded-md"
-                      />
+                      /> */}
                       {lesson.is_completed && (
                         <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
                           <svg

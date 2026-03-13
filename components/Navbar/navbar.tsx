@@ -13,7 +13,7 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const disabledRoutes = ["/mentor", "/lesson"];
+  const disabledRoutes = ["/mentor", "/lesson", "/preview"];
   const disableNavbar = disabledRoutes.some((route) =>
     pathname.startsWith(route),
   );

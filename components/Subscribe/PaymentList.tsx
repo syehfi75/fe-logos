@@ -13,7 +13,7 @@ type PaymentMethod = {
 type Props = {
   methods: PaymentMethod[];
   typeOrder?: string[];
-  selectedPlan?: any;
+  selectedPlan?: number[];
 };
 
 const typeLabel: Record<string, string> = {
@@ -43,24 +43,27 @@ function groupByType(items: PaymentMethod[]) {
 
 export default function PaymentList({ methods, typeOrder, selectedPlan }: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [loading, setLoading] = useState(false);
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
   const [postPayment] = usePostUmumToken("apiBase", "/api/user/subscribe/multiplan-with-paymentmethod");
   const router = useRouter();
 
   const handleSubmit = async () => {
     if (!selectedCode || !selectedPlan) return;
+    setLoading(true);
     const body = {
-      plan_id: selectedPlan,
+      plan_ids: selectedPlan,
       payment_method: selectedCode,
     };
-    
     const result = await postPayment(body);
     console.log('result', result);
     if (result?.status) {
       console.log("Subscription successful:", result?.data);
       router.push(result?.data?.invoice_url);
+      setLoading(false);
     } else {
       console.error("Subscription failed:", result);
+      setLoading(false);
     }
   };
 
@@ -84,7 +87,6 @@ export default function PaymentList({ methods, typeOrder, selectedPlan }: Props)
             key={t}
             className="rounded-2xl border border-gray-200 bg-white shadow-sm"
           >
-            {/* Header */}
             <button
               onClick={() => setOpenIndex(isOpen ? null : idx)}
               className="flex w-full items-center justify-between p-4 text-left"
@@ -107,7 +109,6 @@ export default function PaymentList({ methods, typeOrder, selectedPlan }: Props)
               </span>
             </button>
 
-            {/* Content */}
             {isOpen && (
               <div className="grid grid-cols-1 gap-3 px-4 pb-4 sm:grid-cols-2 lg:grid-cols-3">
                 {grouped[t].map((m) => {
@@ -130,7 +131,6 @@ export default function PaymentList({ methods, typeOrder, selectedPlan }: Props)
                       />
                       <div className="flex flex-col">
                         <span className="font-medium">{m.name}</span>
-                        {/* <span className="text-xs text-gray-500">{m.code}</span> */}
                       </div>
                     </label>
                   );
@@ -141,23 +141,16 @@ export default function PaymentList({ methods, typeOrder, selectedPlan }: Props)
         );
       })}
 
-      {/* Output pilihan */}
       <button
         className="bg-logos-green text-white p-3.5 rounded-full cursor-pointer w-full text-xl hover:shadow-md disabled:bg-gray-400 disabled:cursor-default transition-all"
-        disabled={!selectedCode}
+        disabled={!selectedCode || loading}
         onClick={() => {
           console.log("Selected payment method code:", selectedCode, selectedPlan);
           handleSubmit();
-          
         }}
       >
         Subscribe
       </button>
-      {/* <div className="mt-4 p-3 bg-gray-50 border rounded-lg">
-        <p className="text-sm">
-          Metode terpilih: <strong>{selectedCode}</strong>
-        </p>
-      </div>   */}
     </div>
   );
 }

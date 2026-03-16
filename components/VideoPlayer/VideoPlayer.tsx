@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { usePutUmum } from "@/utils/useFetchUmum";
+import { usePostUmumToken } from "@/utils/useFetchUmum";
 
 export default function VideoPlayer({
   videoId,
@@ -12,69 +12,97 @@ export default function VideoPlayer({
 }: any) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const playerRef = useRef<any>(null);
-  const lastSavedRef = useRef<number>(0);
+  const lastSavedRef = useRef<number>(Date.now());
+  const isInitialized = useRef(false);
 
-  const [postProgress] = usePutUmum(
+  const [postProgress] = usePostUmumToken(
     "apiBase",
-    `/api/user/lessons/${videoId}/progress`
+    `/api/user/lessons/${videoId}/progress`,
   );
 
   useEffect(() => {
-    if (!iframeRef.current) return;
+    isInitialized.current = false;
+    lastSavedRef.current = Date.now();
+    let player: any = null;
 
-    let player: any;
+    const initPlayer = async () => {
+      if (!iframeRef.current || isInitialized.current) return;
 
-    import("player.js").then(({ default: Player }) => {
-      player = new Player(iframeRef.current!);
-      playerRef.current = player;
+      try {
+        const module = (await import("player.js")) as any;
+        const Player = module.Player || module.default;
 
-      player.on("ready", () => {
-        if (last_duration > 0) {
-          player.setCurrentTime(last_duration);
-        }
-      });
+        if (!iframeRef.current) return;
 
-      player.on("timeupdate", async ({ seconds, duration: videoDuration }: any) => {
-        if (!enableProgressTracking) return;
+        player = new Player(iframeRef.current);
+        playerRef.current = player;
+        isInitialized.current = true;
 
-        const now = Date.now();
-        if (now - lastSavedRef.current < 30000) return;
-
-        await postProgress({
-          last_position: Math.round(seconds),
-          video_duration: Math.round(videoDuration ?? duration),
-          watched_duration: Math.round(seconds),
+        player.on("ready", () => {
+          if (last_duration > 0) {
+            player.setCurrentTime(last_duration);
+          }
         });
 
-        lastSavedRef.current = now;
-      });
+        player.on(
+          "timeupdate",
+          async ({ seconds, duration: videoDuration }: any) => {
+            if (!enableProgressTracking) return;
+            const now = Date.now();
+            if (now - lastSavedRef.current < 30000) return;
 
-      player.on("ended", async () => {
-        if (!enableProgressTracking) return;
-        await postProgress({
-          last_position: duration,
-          video_duration: duration,
-          watched_duration: duration,
-          completed: true,
+            lastSavedRef.current = now;
+            await postProgress({
+              last_position: Math.round(seconds),
+              video_duration: Math.round(videoDuration),
+              watched_duration: Math.round(seconds),
+            });
+          },
+        );
+
+        player.on("ended", async () => {
+          if (!enableProgressTracking) return;
+          await postProgress({
+            last_position: duration,
+            video_duration: duration,
+            watched_duration: duration,
+          });
         });
-      });
-    });
+      } catch (error) {
+        console.error("Player Init Error:", error);
+      }
+    };
+
+    initPlayer();
 
     return () => {
       if (player) {
-        player.off("ready");
-        player.off("timeupdate");
-        player.off("ended");
+        try {
+          player.off("ready");
+          player.off("timeupdate");
+          player.off("ended");
+
+          if (iframeRef.current) {
+            player.destroy?.();
+          }
+        } catch (e) {
+          console.warn("Safe cleanup: player already gone");
+        }
       }
+      playerRef.current = null;
+      isInitialized.current = false;
     };
-  }, [videoId]);
+  }, [videoId, url]);
 
   return (
-    <iframe
-      ref={iframeRef}
-      src={`${url}?playerjs=1`}
-      className="w-full h-full"
-      allow="autoplay; fullscreen"
-    />
+    <div className="aspect-video w-full bg-black">
+      <iframe
+        key={videoId}
+        ref={iframeRef}
+        src={`${url}?playerjs=1`}
+        className="w-full h-full"
+        allow="autoplay; fullscreen"
+      />
+    </div>
   );
 }

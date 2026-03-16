@@ -7,6 +7,10 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/auth";
 import { useCartStore } from "@/store/useCartStore";
 import { ShoppingCart, User } from "lucide-react";
+import { usePaymentStore } from "@/store/payment";
+import Modal from "../Modal/Modal";
+import { formatPrice } from "@/utils/formatPrice";
+import { toast } from "sonner";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,12 +27,19 @@ export default function Navbar() {
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenPlans, setIsOpenPlans] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   const router = useRouter();
   const { user, logout } = useAuthStore();
   const { items } = useCartStore();
+
+  const { list, loading, fetchPlans } = usePaymentStore();
+
+  useEffect(() => {
+    if (!list.length) fetchPlans();
+  }, [list.length, fetchPlans]);
 
   useEffect(() => {
     setMounted(true);
@@ -121,6 +132,24 @@ export default function Navbar() {
     router.push("/");
   };
 
+  const { addItem } = useCartStore();
+
+  const handleSelectPlan = (plan: any) => {
+    // 1. Mapping data dari API 'plan' ke struktur 'CartItem'
+    addItem({
+      id: plan.id,
+      title: plan.name, // Mapping 'name' ke 'title' sesuai interface CartItem
+      price: Number(plan.price), // Pastikan menjadi number
+      image: "/images/default-plan.png", // Atau plan.image jika ada
+    });
+
+    // 2. Feedback ke user
+    toast.success(`${plan.name} ditambahkan ke keranjang!`);
+
+    // 3. Tutup Modal
+    setIsOpenPlans(false);
+  };
+
   const textColorClass =
     isHome && !isScrolled && !isOpen ? "text-white" : "text-purple-900";
 
@@ -130,6 +159,63 @@ export default function Navbar() {
 
   return (
     <>
+      <Modal
+        open={isOpenPlans}
+        onClose={() => setIsOpenPlans(false)}
+        title="Pilih Paket Langganan"
+        size="lg"
+      >
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-10 space-y-3">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+            <p className="text-gray-500 animate-pulse">
+              Memuat paket terbaik untuk Anda...
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4 py-2">
+            {list.filter((plan) => plan.id !== "1").map((plan) => (
+              <div
+                key={plan.id}
+                onClick={() => handleSelectPlan(plan)}
+                className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-5 transition-all hover:border-purple-300 hover:shadow-md hover:shadow-purple-500/10 cursor-pointer active:scale-[0.98]"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-gray-800 group-hover:text-purple-700 transition-colors">
+                      {plan.name}
+                    </h3>
+                    <p className="mt-1 text-sm leading-relaxed text-gray-500">
+                      {plan.description ||
+                        "Akses penuh ke semua fitur kategori ini."}
+                    </p>
+                  </div>
+
+                  <div className="text-right">
+                    <div className="text-xl font-black text-gray-900">
+                      {plan.price === "0.00" ? (
+                        <span className="text-green-600 uppercase text-sm tracking-wider">
+                          Gratis
+                        </span>
+                      ) : (
+                        <div className="flex items-center gap-2 text-xl font-bold text-purple-600">
+                          {formatPrice(plan.price)}
+                          <p className="text-[10px] font-medium uppercase tracking-widest text-gray-400">
+                            /Bulan
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dekorasi halus saat hover */}
+                <div className="absolute inset-y-0 left-0 w-1 bg-purple-500 opacity-0 transition-opacity group-hover:opacity-100" />
+              </div>
+            ))}
+          </div>
+        )}
+      </Modal>
       <nav
         ref={navRef}
         className="fixed top-0 left-1/2 -translate-x-1/2 w-full z-[60] flex items-center justify-between"
@@ -172,6 +258,14 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
+          )}
+          {user && (
+            <button
+              onClick={() => setIsOpenPlans(true)}
+              className="px-4 py-2 bg-purple-600 text-white text-[10px] font-bold uppercase rounded-full cursor-pointer"
+            >
+              Plans
+            </button>
           )}
 
           {mounted && user ? (

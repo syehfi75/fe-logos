@@ -34,50 +34,40 @@ export default function Modal({
   const [mounted, setMounted] = useState(false);
   const dialogRef = useRef<HTMLDivElement | null>(null);
 
-  // Ensure portal only renders on client
   useEffect(() => setMounted(true), []);
 
-  // Lock body scroll when open
   useEffect(() => {
     if (!mounted) return;
-    const original = document.body.style.overflow;
-    if (open) document.body.style.overflow = "hidden";
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
     return () => {
-      document.body.style.overflow = original;
+      document.body.style.overflow = "unset";
     };
   }, [open, mounted]);
 
-  // Close on ESC & focus the dialog on open
   useEffect(() => {
     if (!open) return;
-
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
-
     window.addEventListener("keydown", onKey);
-
-    // Focus the dialog for accessibility
-    const id = requestAnimationFrame(() => dialogRef.current?.focus());
-
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      cancelAnimationFrame(id);
-    };
+    return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
   if (!mounted || !open) return null;
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      aria-labelledby={title ? "modal-title" : undefined}
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
       role="dialog"
       aria-modal="true"
     >
-      {/* Backdrop */}
+      {/* Backdrop - Ditambahkan warna gelap (bg-black/50) agar konten di belakang tidak membingungkan */}
       <div
-        className="absolute inset-0 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
         onClick={closeOnOverlayClick ? onClose : undefined}
       />
 
@@ -85,16 +75,14 @@ export default function Modal({
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className={`relative w-full ${sizeClass[size]} rounded-2xl bg-white shadow-xl ring-1 ring-black/5 outline-none`}
+        className={`relative flex flex-col w-full ${sizeClass[size]} max-h-[90vh] rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 outline-none overflow-hidden`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between gap-4 border-b px-5 py-3 ">
+          <div className="flex shrink-0 items-center justify-between border-b px-6 py-4">
             {title ? (
-              <h2 id="modal-title" className="text-lg font-semibold">
-                {title}
-              </h2>
+              <h2 className="text-xl font-bold text-gray-900">{title}</h2>
             ) : (
               <span />
             )}
@@ -102,30 +90,27 @@ export default function Modal({
             {showCloseButton && (
               <button
                 onClick={onClose}
-                aria-label="Close"
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 "
+                className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
               >
-                {/* simple X icon */}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  className="h-5 w-5"
-                >
-                  <path d="M18 6L6 18M6 6l12 12" />
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             )}
           </div>
         )}
 
-        {/* Body */}
-        <div className="px-5 py-4">{children}</div>
+        {/* Body - Bagian paling krusial: ditambahkan overflow-y-auto */}
+        <div className="flex-1 overflow-y-auto px-6 py-4 custom-scrollbar">
+          {children}
+        </div>
 
         {/* Footer */}
-        {footer && <div className="border-t px-5 py-3">{footer}</div>}
+        {footer && (
+          <div className="shrink-0 border-t bg-gray-50 px-6 py-4">
+            {footer}
+          </div>
+        )}
       </div>
     </div>,
     document.body

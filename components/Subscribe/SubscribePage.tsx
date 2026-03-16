@@ -70,7 +70,7 @@ export default function SubscribePage({ slug }: Props) {
           {loadingPayment ? (
             <p>Loading payment methods...</p>
           ) : (
-            <PaymentList methods={listPayment} selectedPlan={selectedPlan?.id} />
+            <PaymentList methods={listPayment} selectedPlan={[Number(selectedPlan?.id)]} />
           )}
         </div>
       </div>

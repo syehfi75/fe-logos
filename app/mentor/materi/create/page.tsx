@@ -38,7 +38,7 @@ export default function CreateMateriPage() {
   }, [selectedId]);
 
   const filteredItemsById = mentorKursus?.filter(
-    (item) => item.id === selectedId
+    (item) => item.id === selectedId,
   );
 
   const handleSubmit = async () => {
@@ -50,7 +50,6 @@ export default function CreateMateriPage() {
     formData.append(`video`, video[0]);
     try {
       const result = await postMateri(formData);
-      // console.log(result);
 
       if (result?.status) {
         await useMentorStore.getState().fetchMentorKursus();
@@ -58,7 +57,7 @@ export default function CreateMateriPage() {
         toast.success(
           "Materi " +
             filteredItemsById?.[0]?.title +
-            " berhasil dibuat!. Tunggu sekitar 2 menit"
+            " berhasil dibuat!. Tunggu sekitar 2 menit",
         );
         router.push("/mentor/materi");
       }

@@ -2,7 +2,6 @@
 
 import { useAuthStore } from "@/store/auth";
 import { useCourseStore } from "@/store/course";
-import { checkAndRefreshToken } from "@/utils/checkToken";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,7 +12,6 @@ export default function Dashboard() {
   const user = useAuthStore((state) => state.user);
   const { courses, loading, fetchCourses } = useCourseStore();
   const router = useRouter();
-  // console.log(courses);
 
   useEffect(() => {
     fetchCourses();

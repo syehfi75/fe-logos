@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -8,6 +7,7 @@ import Providers from "./providers";
 import { Toaster } from "sonner";
 import Navbar from "@/components/Navbar/navbar";
 import FullPageLoader from "@/components/FullPageLoader";
+import PwaRegister from "@/components/PwaRegister";
 
 const grostek = localFont({
   src: "./fonts/Grostek-vf.ttf",
@@ -47,6 +47,7 @@ export default function RootLayout({
             <Toaster position="top-center" closeButton richColors />
           </Providers>
         </Suspense>
+        <PwaRegister />
       </body>
     </html>
   );

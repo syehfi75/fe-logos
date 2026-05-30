@@ -12,8 +12,7 @@ export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [resetPass, setResetPass] = useState({
     selector: selector[0],
-    validator:
-      validator[0],
+    validator: validator[0],
     password: "",
     confirm_password: "",
   });
@@ -24,15 +23,13 @@ export default function ResetPasswordPage() {
     setIsLoading(true);
     try {
       const res = await axios.post(
-        process.env.NEXT_PUBLIC_API_AUTH + "/api/reset-password",
-        resetPass
+        process.env.NEXT_PUBLIC_API_BASE + "/api/reset-password",
+        resetPass,
       );
 
-      // const data = res.data;
-      // console.log("register:", data);
       setIsLoading(false);
       toast.success(
-        "A security token has been emailed to you. Enter it in the box below to continue."
+        "A security token has been emailed to you. Enter it in the box below to continue.",
       );
     } catch (error: any) {
       console.error("Login gagal:", error);

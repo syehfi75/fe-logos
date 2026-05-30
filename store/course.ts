@@ -10,6 +10,8 @@ import {
 
 export interface Lesson {
   id: number;
+  content_type: "video" | "audio";
+  audio_url: string;
   thumbnail: string;
   title: string;
   description: string;

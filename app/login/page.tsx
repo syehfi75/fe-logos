@@ -65,7 +65,6 @@ export default function LoginPage() {
       await login(loginForm.email, loginForm.password);
       router.push("/dashboard");
     } catch (error: any) {
-      console.log(error);
       const messages = Object.values(error?.messages).join("\n");
       toast.error(messages);
     } finally {
@@ -79,7 +78,7 @@ export default function LoginPage() {
     setIsLoading(false);
     if (res?.message) {
       toast.success(
-        "Please confirm your account by clicking the activation link in the email we have sent."
+        "Please confirm your account by clicking the activation link in the email we have sent.",
       );
       setIsLoading(false);
     } else {
@@ -93,14 +92,14 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       const res = await axios.post(
-        process.env.NEXT_PUBLIC_API_AUTH + "/api/forgot-password",
+        process.env.NEXT_PUBLIC_API_BASE + "/api/forgot-password",
         {
           email: emailPass,
-        }
+        },
       );
       setIsLoading(false);
       toast.success(
-        "A security token has been emailed to you. Enter it in the box below to continue."
+        "A security token has been emailed to you. Enter it in the box below to continue.",
       );
     } catch (error: any) {
       console.error("Login gagal:", error);

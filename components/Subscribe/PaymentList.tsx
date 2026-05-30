@@ -1,5 +1,5 @@
 "use client";
-import {  usePostUmumToken } from "@/utils/useFetchUmum";
+import { usePostUmumToken } from "@/utils/useFetchUmum";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -41,11 +41,18 @@ function groupByType(items: PaymentMethod[]) {
   }, {});
 }
 
-export default function PaymentList({ methods, typeOrder, selectedPlan }: Props) {
+export default function PaymentList({
+  methods,
+  typeOrder,
+  selectedPlan,
+}: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [loading, setLoading] = useState(false);
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
-  const [postPayment] = usePostUmumToken("apiBase", "/api/user/subscribe/multiplan-with-paymentmethod");
+  const [postPayment] = usePostUmumToken(
+    "apiBase",
+    "/api/user/subscribe/multiplan-with-paymentmethod",
+  );
   const router = useRouter();
 
   const handleSubmit = async () => {
@@ -56,9 +63,8 @@ export default function PaymentList({ methods, typeOrder, selectedPlan }: Props)
       payment_method: selectedCode,
     };
     const result = await postPayment(body);
-    console.log('result', result);
+
     if (result?.status) {
-      console.log("Subscription successful:", result?.data);
       router.push(result?.data?.invoice_url);
       setLoading(false);
     } else {
@@ -145,7 +151,6 @@ export default function PaymentList({ methods, typeOrder, selectedPlan }: Props)
         className="bg-logos-green text-white p-3.5 rounded-full cursor-pointer w-full text-xl hover:shadow-md disabled:bg-gray-400 disabled:cursor-default transition-all"
         disabled={!selectedCode || loading}
         onClick={() => {
-          console.log("Selected payment method code:", selectedCode, selectedPlan);
           handleSubmit();
         }}
       >

@@ -20,7 +20,7 @@ export default function EditKursusPage() {
   });
   const [listCourse, loadingCourse] = useFetchUmumToken(
     "apiBase",
-    `/api/mentor/courses/${id}`
+    `/api/mentor/courses/${id}`,
   );
 
   useEffect(() => {
@@ -30,7 +30,6 @@ export default function EditKursusPage() {
       setSelectedOption(course?.access_type.toString());
     }
   }, [listCourse]);
-  // console.log(listCourse);
 
   const [postCourse] = usePostUmumToken("apiBase", `/api/mentor/courses/${id}`);
   const handleForm = (e: any) => {

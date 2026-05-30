@@ -6,7 +6,7 @@ import StoreHydrator from "@/components/HomePage/StoreHydrator";
 import About from "@/components/HomePage/About";
 import ProvenResults from "@/components/HomePage/ProvenResults";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_AUTH;
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE;
 async function getHomeData() {
   const res = await fetch(BASE_URL + "/api/content/homepage", {
     next: { revalidate: 3600 },
@@ -24,7 +24,7 @@ export default async function Home() {
       <StoreHydrator data={data} />
       <main className="mb-96">
         <HeroHomePage />
-        <BeginJourney  />
+        <BeginJourney />
         <MembershipClass />
         <PremiumClass />
         <ProvenResults />

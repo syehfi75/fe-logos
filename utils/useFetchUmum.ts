@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export interface IResponsePost<T> {
   status: boolean;
   message: null | string;
-  messages?: any,
+  messages?: any;
   /** data atau error */
   data: T;
   postedData: any;
@@ -21,14 +21,14 @@ type THasilPost<T> = [
   (data: any) => Promise<IResponsePost<T> | null>,
   boolean,
   CancelTokenSource,
-  number?
+  number?,
 ];
 type TJenisAPI = "apiBase";
 
-const API_AUTH = process.env.NEXT_PUBLIC_API_AUTH;
+const API_AUTH = process.env.NEXT_PUBLIC_API_BASE;
 
 const apiMap: Record<TJenisAPI, string> = {
-  apiBase: process.env.NEXT_PUBLIC_API_AUTH!,
+  apiBase: process.env.NEXT_PUBLIC_API_BASE!,
 };
 
 const cekAPI = (jenisApi: TJenisAPI) => {
@@ -38,7 +38,7 @@ const cekAPI = (jenisApi: TJenisAPI) => {
 export function useFetchUmum<T = any>(
   jenisApi: "apiBase",
   url: string,
-  denganToken = true
+  denganToken = true,
 ): THasilFetch<T> {
   const [dataJSON, setDataJSON] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,7 +68,7 @@ export function useFetchUmum<T = any>(
 export function useFetchUmumToken<T = any>(
   jenisApi: "apiBase",
   url: string,
-  denganToken = true
+  denganToken = true,
 ): THasilFetch<T> {
   const [dataJSON, setDataJSON] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
@@ -98,7 +98,7 @@ export function useFetchUmumToken<T = any>(
 export function useFetchTriggerToken<T = any>(
   jenisApi: "apiBase",
   url: string,
-  denganToken = true
+  denganToken = true,
 ): THasilTriggerFetch<T> {
   const [dataJSON, setDataJSON] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
@@ -174,7 +174,7 @@ export function useFetchTriggerToken<T = any>(
 export function usePostUmumToken<T = any>(
   jenisApi: TJenisAPI,
   link: string | null,
-  denganToken = true
+  denganToken = true,
 ): THasilPost<T> {
   const token = useAuthStore.getState().accessToken;
   const [loading, setLoading] = useState(false);
@@ -208,13 +208,13 @@ export function usePostUmumToken<T = any>(
         denganToken,
         token,
         cancelToken.current,
-        (percent) => setProgress(percent)
+        (percent) => setProgress(percent),
       );
       linkSebelumnya.current = link;
       setLoading(false);
       return hasilFetch.data;
     },
-    [jenisApi, link, token]
+    [jenisApi, link, token],
   );
 
   return [post, loading, cancelToken.current, progress];
@@ -223,7 +223,7 @@ export function usePostUmumToken<T = any>(
 export function usePutUmum<T = any>(
   jenisApi: TJenisAPI,
   link: string | null,
-  denganToken = true
+  denganToken = true,
 ): THasilPost<T> {
   const token = useAuthStore.getState().accessToken;
   const [loading, setLoading] = useState(true);
@@ -255,13 +255,13 @@ export function usePutUmum<T = any>(
         link,
         denganToken,
         token,
-        cancelToken.current
+        cancelToken.current,
       );
       linkSebelumnya.current = link;
       setLoading(false);
       return hasilFetch.data;
     },
-    [jenisApi, link, token]
+    [jenisApi, link, token],
   );
 
   return [post, loading, cancelToken.current];

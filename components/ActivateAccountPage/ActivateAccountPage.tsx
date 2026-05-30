@@ -11,7 +11,6 @@ export default function ActivateAccount({ slug }: Props) {
   const [activationStatus, setActivationStatus] = useState<
     "pending" | "success" | "error" | "resent"
   >("pending");
-  const [errorMessage, setErrorMessage] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -26,17 +25,15 @@ export default function ActivateAccount({ slug }: Props) {
 
     try {
       const res = await axios.post(
-        process.env.NEXT_PUBLIC_API_AUTH + "/api/resend-activation",
+        process.env.NEXT_PUBLIC_API_BASE + "/api/resend-activation",
         {
           email: email,
-        }
+        },
       );
 
-      // const data = res.data;
-      // console.log("register:", data);
       setIsLoading(false);
       toast.success(
-        "Please confirm your account by clicking the activation link in the email we have sent."
+        "Please confirm your account by clicking the activation link in the email we have sent.",
       );
     } catch (error: any) {
       console.error("Login gagal:", error);
@@ -50,15 +47,15 @@ export default function ActivateAccount({ slug }: Props) {
 
     try {
       const res = await axios.get(
-        process.env.NEXT_PUBLIC_API_AUTH + "/api/activate",
+        process.env.NEXT_PUBLIC_API_BASE + "/api/activate",
         {
           params: { token: slug[0] }, // axios get harus pakai params
-        }
+        },
       );
       setIsLoading(false);
-      setActivationStatus("success")
+      setActivationStatus("success");
       toast.success(
-        "Success! Your account has been activated. You can now log in."
+        "Success! Your account has been activated. You can now log in.",
       );
     } catch (error: any) {
       console.error("Login gagal:", error);
@@ -66,10 +63,7 @@ export default function ActivateAccount({ slug }: Props) {
       toast.error(error.response?.data?.message || "Unknown error");
     }
   };
-  // useEffect(() => {
-  //   console.log(email);
-    
-  // }, [email])
+
   return (
     <div className="flex flex-col justify-center items-center min-h-screen w-full">
       <div className="flex flex-col items-center justify-center w-full max-w-md p-6 bg-white shadow-md rounded-lg">
@@ -104,7 +98,9 @@ export default function ActivateAccount({ slug }: Props) {
                   <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
                     <Mail className="h-6 w-6 text-blue-600" />
                   </div>
-                  <h1 className="text-2xl font-bold text-center">Resend activation account</h1>
+                  <h1 className="text-2xl font-bold text-center">
+                    Resend activation account
+                  </h1>
                 </div>
                 <input
                   className="w-full border border-gray-500 p-2 rounded-lg outline-none"

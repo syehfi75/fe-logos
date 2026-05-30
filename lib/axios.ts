@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const API_AUTH = process.env.NEXT_PUBLIC_API_AUTH;
+const API_AUTH = process.env.NEXT_PUBLIC_API_BASE;
 
 const axiosInstance = axios.create({
   baseURL: API_AUTH,
@@ -267,7 +267,7 @@ export const deleteUmumToken = async (
 // type TJenisAPI = "apiBase";
 
 // const apiMap: Record<TJenisAPI, string> = {
-//   apiBase: process.env.NEXT_PUBLIC_API_AUTH!,
+//   apiBase: process.env.NEXT_PUBLIC_API_BASE!,
 // };
 
 // const cekAPI = (jenisApi: TJenisAPI) => {

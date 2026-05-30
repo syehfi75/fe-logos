@@ -5,6 +5,7 @@ import VideoPlayer from "../VideoPlayer/VideoPlayer";
 import Image from "next/image";
 import { ArrowLeft, CircleCheck } from "lucide-react";
 import Link from "next/link";
+import OfflineAudioPlayer from "../OfflineAudioPlayer";
 
 export default function WatchLesson({ slug }: Props) {
   const {
@@ -21,13 +22,11 @@ export default function WatchLesson({ slug }: Props) {
   });
   const lessons = courseDetail?.lessons ?? [];
 
-  // index lesson yang sedang aktif
   const currentIndex = useMemo(() => {
     if (!selectedLesson) return -1;
     return lessons.findIndex((l) => l.slug === selectedLesson.slug);
   }, [lessons, selectedLesson]);
 
-  // cari prev yang tidak terkunci
   const goPrev = useCallback(() => {
     if (currentIndex <= 0) return;
     let i = currentIndex - 1;
@@ -35,7 +34,6 @@ export default function WatchLesson({ slug }: Props) {
     if (i >= 0) setSelectedLesson(lessons[i]);
   }, [currentIndex, lessons]);
 
-  // cari next yang tidak terkunci
   const goNext = useCallback(() => {
     if (currentIndex === -1 || currentIndex >= lessons.length - 1) return;
     let i = currentIndex + 1;
@@ -74,7 +72,6 @@ export default function WatchLesson({ slug }: Props) {
   return (
     <div className="flex flex-col md:flex-row h-screen max-h-screen">
       <div className="flex-1 flex flex-col">
-        {/* Header */}
         <div className="p-4 border-b border-gray-300">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
             <Link href="/dashboard" className="flex items-center">
@@ -87,9 +84,8 @@ export default function WatchLesson({ slug }: Props) {
           </div>
         </div>
 
-        {/* Main content */}
         <div className="flex-1 overflow-y-auto p-4">
-          {selectedLesson?.video_url && (
+          {selectedLesson?.content_type == "video" ? (
             <>
               <VideoPlayer
                 url={selectedLesson.video_url}
@@ -122,6 +118,11 @@ export default function WatchLesson({ slug }: Props) {
                 </button>
               </div>
             </>
+          ) : (
+            <OfflineAudioPlayer
+              audioUrl={selectedLesson?.audio_url || ""}
+              trackId={`track_${selectedLesson?.id}`}
+            />
           )}
 
           <h1 className="text-lg md:text-xl font-bold mb-2 mt-4">
@@ -133,7 +134,6 @@ export default function WatchLesson({ slug }: Props) {
 
           <div className="flex items-center gap-3 mt-4">
             <div className="rounded-full h-10 w-10 md:h-14 md:w-14 bg-black overflow-hidden">
-              {/* TODO: Avatar Instructor */}
               <Image
                 src={getImageUrl(courseDetail.instructor.avatar)}
                 alt={courseDetail.instructor.name}
@@ -192,7 +192,6 @@ export default function WatchLesson({ slug }: Props) {
                 >
                   <div className="flex items-start gap-2 md:gap-3">
                     <div className="relative flex-shrink-0">
-                      {/* TODO: Thumbnail lesson */}
                       <Image
                         src={getImageUrl(lesson.thumbnail)}
                         alt={lesson.title}

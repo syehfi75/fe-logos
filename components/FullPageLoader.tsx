@@ -1,13 +1,19 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import gsap from "gsap";
 
 export default function FullPageLoader() {
+  const pathname = usePathname();
   const overlayRef = useRef(null);
   const [isVisible, setIsVisible] = useState(true);
 
+  const isCallbackPage = pathname === "/callback";
+
   useEffect(() => {
+    if (isCallbackPage) return;
+
     const ctx = gsap.context(() => {
       gsap.to(overlayRef.current, {
         opacity: 0,
@@ -29,9 +35,9 @@ export default function FullPageLoader() {
       ctx.revert();
       document.body.style.overflow = "unset";
     };
-  }, []);
+  }, [isCallbackPage]);
 
-  if (!isVisible) return null;
+  if (isCallbackPage || !isVisible) return null;
 
   return (
     <div

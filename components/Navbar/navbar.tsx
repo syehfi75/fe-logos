@@ -17,7 +17,9 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const disabledRoutes = ["/mentor", "/lesson", "/preview"];
+  const link =
+    "https://afzan.id/sso.php?app_id=1&redirect=http://localhost:3000/callback";
+  const disabledRoutes = ["/mentor", "/lesson", "/preview", "/callback"];
   const disableNavbar = disabledRoutes.some((route) =>
     pathname.startsWith(route),
   );
@@ -174,45 +176,46 @@ export default function Navbar() {
           </div>
         ) : (
           <div className="space-y-4 py-2">
-            {list.filter((plan) => plan.id !== "1").map((plan) => (
-              <div
-                key={plan.id}
-                onClick={() => handleSelectPlan(plan)}
-                className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-5 transition-all hover:border-purple-300 hover:shadow-md hover:shadow-purple-500/10 cursor-pointer active:scale-[0.98]"
-              >
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-gray-800 group-hover:text-purple-700 transition-colors">
-                      {plan.name}
-                    </h3>
-                    <p className="mt-1 text-sm leading-relaxed text-gray-500">
-                      {plan.description ||
-                        "Akses penuh ke semua fitur kategori ini."}
-                    </p>
-                  </div>
+            {list
+              .filter((plan) => plan.id !== "1")
+              .map((plan) => (
+                <div
+                  key={plan.id}
+                  onClick={() => handleSelectPlan(plan)}
+                  className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-5 transition-all hover:border-purple-300 hover:shadow-md hover:shadow-purple-500/10 cursor-pointer active:scale-[0.98]"
+                >
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-800 group-hover:text-purple-700 transition-colors">
+                        {plan.name}
+                      </h3>
+                      <p className="mt-1 text-sm leading-relaxed text-gray-500">
+                        {plan.description ||
+                          "Akses penuh ke semua fitur kategori ini."}
+                      </p>
+                    </div>
 
-                  <div className="text-right">
-                    <div className="text-xl font-black text-gray-900">
-                      {plan.price === "0.00" ? (
-                        <span className="text-green-600 uppercase text-sm tracking-wider">
-                          Gratis
-                        </span>
-                      ) : (
-                        <div className="flex items-center gap-2 text-xl font-bold text-purple-600">
-                          {formatPrice(plan.price)}
-                          <p className="text-[10px] font-medium uppercase tracking-widest text-gray-400">
-                            /Bulan
-                          </p>
-                        </div>
-                      )}
+                    <div className="text-right">
+                      <div className="text-xl font-black text-gray-900">
+                        {plan.price === "0.00" ? (
+                          <span className="text-green-600 uppercase text-sm tracking-wider">
+                            Gratis
+                          </span>
+                        ) : (
+                          <div className="flex items-center gap-2 text-xl font-bold text-purple-600">
+                            {formatPrice(plan.price)}
+                            <p className="text-[10px] font-medium uppercase tracking-widest text-gray-400">
+                              /Bulan
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Dekorasi halus saat hover */}
-                <div className="absolute inset-y-0 left-0 w-1 bg-purple-500 opacity-0 transition-opacity group-hover:opacity-100" />
-              </div>
-            ))}
+                  <div className="absolute inset-y-0 left-0 w-1 bg-purple-500 opacity-0 transition-opacity group-hover:opacity-100" />
+                </div>
+              ))}
           </div>
         )}
       </Modal>
@@ -315,7 +318,7 @@ export default function Navbar() {
             </div>
           ) : (
             <button
-              onClick={() => router.push("/login")}
+              onClick={() => router.push(link)}
               className="px-6 py-2 bg-purple-600 text-white text-[10px] font-bold uppercase rounded-full cursor-pointer"
             >
               Login

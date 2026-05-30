@@ -26,7 +26,7 @@ interface AuthMentorState {
   logout: () => void;
 }
 
-const API_AUTH = process.env.NEXT_PUBLIC_API_AUTH;
+const API_AUTH = process.env.NEXT_PUBLIC_API_BASE;
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -45,11 +45,9 @@ export const useAuthStore = create<AuthState>()(
         Cookies.set("access_token", access_token, { expires: 1 });
         Cookies.set("refresh_token", refresh_token, { expires: 7 });
 
-      const user = await axios.get(`${API_AUTH}/api/profile`, {
+        const user = await axios.get(`${API_AUTH}/api/profile`, {
           headers: { Authorization: `Bearer ${access_token}` },
         });
-        // console.log('user', user);
-        
 
         set({
           accessToken: access_token,
@@ -75,8 +73,8 @@ export const useAuthStore = create<AuthState>()(
         accessToken: state.accessToken,
         // refreshToken: state.refreshToken,
       }),
-    }
-  )
+    },
+  ),
 );
 
 export const useAuthMentorStore = create<AuthMentorState>()(
@@ -91,10 +89,18 @@ export const useAuthMentorStore = create<AuthMentorState>()(
           email,
           password,
         });
-        const { access_token, refresh_token, expires_in, refresh_expires_in, user } = res.data;
+        const {
+          access_token,
+          refresh_token,
+          expires_in,
+          refresh_expires_in,
+          user,
+        } = res.data;
 
         Cookies.set("access_token", access_token, { expires: expires_in });
-        Cookies.set("refresh_token", refresh_token, { expires: refresh_expires_in });
+        Cookies.set("refresh_token", refresh_token, {
+          expires: refresh_expires_in,
+        });
 
         set({
           accessToken: access_token,
@@ -120,8 +126,8 @@ export const useAuthMentorStore = create<AuthMentorState>()(
         accessToken: state.accessToken,
         // refreshToken: state.refreshToken,
       }),
-    }
-  )
+    },
+  ),
 );
 
 export const logoutUser = async () => {

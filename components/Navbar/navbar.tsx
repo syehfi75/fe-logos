@@ -18,7 +18,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const link =
-    "https://afzan.id/sso.php?app_id=1&redirect=http://localhost:3000/callback";
+    "https://afzan.id/sso.php?app_id=1&redirect=https://fe-logos.vercel.app/callback";
   const disabledRoutes = ["/mentor", "/lesson", "/preview", "/callback"];
   const disableNavbar = disabledRoutes.some((route) =>
     pathname.startsWith(route),

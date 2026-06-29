@@ -25,7 +25,7 @@ export default function ProvenResults() {
           </div>
 
           <div className="space-y-12">
-            {data.items.map((result: any, index: number) => (
+            {data.course?.map((result: any, index: number) => (
               <div key={index} className="flex items-start gap-6">
               <div className="mt-1.5 w-4 h-4 rounded-full bg-gray-400 flex-shrink-0"></div>
               <div>

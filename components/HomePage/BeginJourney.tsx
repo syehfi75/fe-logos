@@ -1,9 +1,10 @@
 "use client";
 import useHomeStore from "@/store/useHomeStore";
+import { ArrowRight } from "lucide-react";
 
 export default function BeginJourney() {
-  const data = useHomeStore((state) => state.homeData?.section1); 
-  if (!data) return null; 
+  const data = useHomeStore((state) => state.homeData?.section1);
+  if (!data) return null;
 
   return (
     <section className="bg-white py-20 px-4">
@@ -35,7 +36,7 @@ export default function BeginJourney() {
                   <span className="text-red-500 font-medium">Coming Soon</span>
                 ) : (
                   <button className="flex items-center gap-2 font-medium text-gray-900 hover:gap-3 transition-all">
-                    {card.text}
+                    {card.text} <ArrowRight className="w-4" />
                   </button>
                 )}
               </div>

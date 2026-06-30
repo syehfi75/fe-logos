@@ -2,7 +2,7 @@
 import useHomeStore from "@/store/useHomeStore";
 
 export default function ProvenResults() {
-  const data = useHomeStore((state) => state.homeData?.section4); 
+  const data = useHomeStore((state) => state.homeData?.section6); 
   if (!data) return null;
   return (
     <section className="relative w-full min-h-[600px] flex items-center py-20 overflow-hidden">
@@ -25,7 +25,7 @@ export default function ProvenResults() {
           </div>
 
           <div className="space-y-12">
-            {data.course?.map((result: any, index: number) => (
+            {data.items.map((result: any, index: number) => (
               <div key={index} className="flex items-start gap-6">
               <div className="mt-1.5 w-4 h-4 rounded-full bg-gray-400 flex-shrink-0"></div>
               <div>

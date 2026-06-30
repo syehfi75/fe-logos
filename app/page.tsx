@@ -5,6 +5,8 @@ import HeroHomePage from "@/components/HomePage/Hero";
 import StoreHydrator from "@/components/HomePage/StoreHydrator";
 import About from "@/components/HomePage/About";
 import ProvenResults from "@/components/HomePage/ProvenResults";
+import AudioClass from "@/components/HomePage/AudioClass";
+import VipClass from "@/components/HomePage/VipClass";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE;
 async function getHomeData() {
@@ -25,8 +27,10 @@ export default async function Home() {
       <main className="mb-96">
         <HeroHomePage />
         <BeginJourney />
-        <MembershipClass />
+        {/* <MembershipClass /> */}
         <PremiumClass />
+        <AudioClass />
+        <VipClass />
         <ProvenResults />
         <About />
       </main>

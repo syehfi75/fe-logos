@@ -2,7 +2,7 @@
 import useHomeStore from "@/store/useHomeStore";
 
 export default function About() {
-  const data = useHomeStore((state) => state.homeData?.section5);
+  const data = useHomeStore((state) => state.homeData?.section7);
   if (!data) return null;
 
   return (

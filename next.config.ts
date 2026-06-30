@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       new URL("https://images.pexels.com/**"),
       new URL("https://dummyimage.com/**"),
       new URL("https://api.afzan.co/**"),
+      new URL("https://reg.afzan.co/**"),
     ],
   },
 };
